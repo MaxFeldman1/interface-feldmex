@@ -6,6 +6,7 @@ import { withRouter } from 'react-router';
 import Web3 from 'web3';
 
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './components/Home';
 import About from './components/About';
 import TradeVarSwap from './components/TradeVarSwap';
@@ -35,6 +36,7 @@ function App() {
 					<Route exact path="/trade/:swapAddress" component={TradeVarSwap}/>
 					<Route exact path="/About" component={About}/>
 
+					<Footer />
 			</ Web3Provider>
 	</Router>
   );

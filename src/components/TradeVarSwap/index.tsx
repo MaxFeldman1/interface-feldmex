@@ -37,7 +37,6 @@ function getDateFormat(timestamp: string): string {
 }
 
 function removeNegative(str: string) {
-	console.log(str, str.replace('-', ''));
 	return str.replace('-', '');
 }
 
@@ -366,7 +365,6 @@ async function startStake(
 	alert(`You will be prompted to stake ${amountString} ${LPTknSymbol} Liquidity Tokens`);
 
 	try {
-		console.log('jeg er her');
 		await StakeHub.methods.startStake(tknIndex, forwardAdjString, true).send({from: context.account});
 	} catch (err) {caught = true; alert('Transaction Failed');}
 
@@ -701,6 +699,8 @@ function TradeVarSwap() {
 
 	});
 	
+	if (!context.active || context.error) return (<div className="content"></div>);
+
 	var currentTime = Math.floor((new Date()).getTime()/1000);
 
 	const mainInfo = (
@@ -876,7 +876,7 @@ function TradeVarSwap() {
 				<br />
 
 				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {console.log(typeof event.target.value); setAmountString(removeNegative(event.target.value))}}/>
+				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -1046,7 +1046,7 @@ function TradeVarSwap() {
 			</div>
 		);
 
-	return (
+	const content = (
 		<div className="content">
 
 			{mainInfo}
@@ -1081,6 +1081,8 @@ function TradeVarSwap() {
 			{notice}
 		</div>
 		);
+
+	return content;
 }
 
 export default TradeVarSwap;

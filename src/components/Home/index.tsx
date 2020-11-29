@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import './Home.css';
 import { useWeb3Context } from 'web3-react'
 import VarSwapInfo from '../VarSwapInfo';
-import { Link } from 'react-router-dom';
 import { abi as OrganizerAbi } from '../../abi/organizer.js';
 
 
@@ -35,7 +34,7 @@ function Home() {
 		}
 
 		asyncUseEffect();
-	}, [context]);
+	}, [context, instances]);
 
 
 	if (!context.active && !context.error) {
@@ -44,6 +43,9 @@ function Home() {
 			<div className="content">
 				<h1 className="header">
 					Web3 Loading
+				</h1>
+				<h1 className="subHeader">
+					Ensure Meta Mask is Enabled and on the Kovan Network
 				</h1>
 			</div>
 		);

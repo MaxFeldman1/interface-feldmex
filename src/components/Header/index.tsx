@@ -6,7 +6,6 @@ import feldmexLogo from '../../assets/feldmex.png'
 function Header() {
 	return (
 		<div className="navbar">
-			<Router>
 				<div className="logo">
 					<Link to="/"><img src={feldmexLogo} alt="Feldmex Logo" /></Link>
 				</div>
@@ -17,7 +16,6 @@ function Header() {
 						<li><Link to="/">Products</Link></li>
 					</ul>
 				</div>
-			</Router>
 		</div>
 		);
 }

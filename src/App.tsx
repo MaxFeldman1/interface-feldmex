@@ -11,32 +11,28 @@ import TradeVarSwap from './components/TradeVarSwap';
 
 const { InjectedConnector, NetworkOnlyConnector } = Connectors ;
 const MetaMask = new InjectedConnector({ supportedNetworks: [1, 42] })
-const Infura = new NetworkOnlyConnector({
-  providerURL: 'https://kovan.infura.io/v3/130607aa3e804a5a9feab69f92045243'
-})
-const connectors = {MetaMask, Infura};
+/*
+	const Infura = new NetworkOnlyConnector({
+	  providerURL: 'https://kovan.infura.io/v3/130607aa3e804a5a9feab69f92045243'
+	})
+*/
+const connectors = {MetaMask};
 
 
 function App() {
   return (
-    <div className="App">
-		<Web3Provider
-			connectors={connectors}
-			libraryName={'web3.js'}
-			web3Api={Web3}
-		>
+	<Router>
+			<Web3Provider
+				connectors={connectors}
+				libraryName={'web3.js'}
+				web3Api={Web3}
+			>
+					<Header />
+					<Route exact path="/trade/:swapAddress" component={TradeVarSwap}/>
+					<Route path="/" component={Home}/>
 
-			<Header />
-				<Router>
-
-					<Switch>
-						<Route exact path="/trade/:swapAddress" component={withRouter(TradeVarSwap)}/>
-						<Route path="/" exact component={withRouter(Home)}/>
-					</Switch>
-
-				</Router>
-		</ Web3Provider>
-    </div>
+			</ Web3Provider>
+	</Router>
   );
 }
 

@@ -8,6 +8,7 @@ import Web3 from 'web3';
 import Header from './components/Header';
 import Home from './components/Home';
 import TradeVarSwap from './components/TradeVarSwap';
+import Web3Loading from './components/Web3Loading';
 
 const { InjectedConnector, NetworkOnlyConnector } = Connectors ;
 const MetaMask = new InjectedConnector({ supportedNetworks: [1, 42] })
@@ -28,6 +29,7 @@ function App() {
 				web3Api={Web3}
 			>
 					<Header />
+					<Web3Loading />
 					<Route exact path="/trade/:swapAddress" component={TradeVarSwap}/>
 					<Route path="/" component={Home}/>
 

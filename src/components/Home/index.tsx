@@ -14,7 +14,6 @@ function Home() {
 	const [instances, setInstances] = useState(null);
 
 	useEffect( () => {
-		context.setFirstValidConnector(['MetaMask', 'Infura']);
 		if (!context.active || context.error) return;
 		
 		async function asyncUseEffect() {

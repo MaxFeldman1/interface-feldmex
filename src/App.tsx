@@ -7,6 +7,7 @@ import Web3 from 'web3';
 
 import Header from './components/Header';
 import Home from './components/Home';
+import About from './components/About';
 import TradeVarSwap from './components/TradeVarSwap';
 import Web3Loading from './components/Web3Loading';
 
@@ -30,8 +31,9 @@ function App() {
 			>
 					<Header />
 					<Web3Loading />
+					<Route exact path="/" component={Home}/>
 					<Route exact path="/trade/:swapAddress" component={TradeVarSwap}/>
-					<Route path="/" component={Home}/>
+					<Route exact path="/About" component={About}/>
 
 			</ Web3Provider>
 	</Router>

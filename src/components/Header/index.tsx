@@ -11,7 +11,7 @@ function Header() {
 				</div>
 				<div className="links">
 					<ul>
-						<li><Link to="/">About</Link></li>
+						<li><Link to="/About">About</Link></li>
 						<li><Link to="/">My Positions</Link></li>
 						<li><Link to="/">Products</Link></li>
 					</ul>

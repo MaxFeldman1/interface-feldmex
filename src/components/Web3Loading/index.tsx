@@ -1,17 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useWeb3Context } from 'web3-react';
+import { withRouter } from "react-router";
+
 import '../Home/Home.css';
-import { useWeb3Context } from 'web3-react'
 
+const nonWeb3Paths = ["About"];
 
-function Web3Loading() {
+function isUsingWeb3 () {
+	let dirs = window.location.pathname.split('/');
+	if (dirs.length < 2) return true;
+	return !nonWeb3Paths.includes(dirs[1]);
+}
+
+interface _props {
+	location: any
+}
+
+function Web3Loading(props: _props) {
 	const context = useWeb3Context();
-
 	useEffect( () => {
 		context.setFirstValidConnector(['MetaMask', 'Infura']);
-	}, [context]);
+
+	}, [context, props.location]);
 
 
-	if (!context.active && !context.error) {
+	console.log(props.location);
+
+	var currentlyUsingWeb3 = isUsingWeb3();
+
+	if (!context.active && !context.error && currentlyUsingWeb3) {
 		// loading
 		return (
 			<div className="content">
@@ -24,7 +41,7 @@ function Web3Loading() {
 			</div>
 		);
 
-	} else if (context.error) {
+	} else if (context.error && currentlyUsingWeb3) {
 		//error
 		return (
 			<div className="content">
@@ -46,4 +63,4 @@ function Web3Loading() {
 	}
 }
 
-export default Web3Loading;
+export default withRouter(Web3Loading);

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './Home.css';
 import { useWeb3Context } from 'web3-react'
+import Web3Loading from '../Web3Loading';
 import VarSwapInfo from '../VarSwapInfo';
 import { abi as OrganizerAbi } from '../../abi/organizer.js';
 
@@ -36,30 +37,7 @@ function Home() {
 	}, [context, instances]);
 
 
-	if (!context.active && !context.error) {
-		// loading
-		return (
-			<div className="content">
-				<h1 className="header">
-					Web3 Loading
-				</h1>
-				<h1 className="subHeader">
-					Ensure Meta Mask is Enabled and on the Kovan Network
-				</h1>
-			</div>
-		);
-
-	} else if (context.error) {
-		//error
-		return (
-			<div className="content">
-				<h1 className="header">
-					Hey Degen U Got a Web3 Error
-				</h1>
-			</div>
-		);
-
-	} else {
+	if (context.active && !context.error) {
 		// success
 		return (
 			<div className="content">
@@ -71,6 +49,9 @@ function Home() {
 				</ul>
 			</div>
 		);
+	}
+	else {
+		return (<div></div>);
 	}
 
 }

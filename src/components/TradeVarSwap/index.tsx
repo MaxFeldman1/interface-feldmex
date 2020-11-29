@@ -36,6 +36,11 @@ function getDateFormat(timestamp: string): string {
 	return hours+', '+month+' '+day+', '+year+' UTC';
 }
 
+function removeNegative(str: string) {
+	console.log(str, str.replace('-', ''));
+	return str.replace('-', '');
+}
+
 function maxRewardsSingleStake(
 	BN: any,
 	secondsRemaining: number,
@@ -391,10 +396,10 @@ async function endStakes(
 	let caught = false;
 
 	try {
-		if (tknIndex == 0) {
+		if (tknIndex === 0) {
 			await stakeHub.methods.endAllStakes0(context.account).send({from: context.account});
 		}
-		else if (tknIndex == 1) {
+		else if (tknIndex === 1) {
 			await stakeHub.methods.endAllStakes1(context.account).send({from: context.account});
 		}
 		else {
@@ -415,6 +420,7 @@ function TradeVarSwap() {
 	const [balanceShort, setBalanceShort] = useState("");
 	const [balancePayout, setBalancePayout] = useState("");
 	const [maxPayout, setMaxPayout] = useState("");
+	const [payoutAtVarianceOf1, setPayoutAtVarianceOf1] = useState("");
 	const [payoutAssetSymbol, setPayoutAssetSymbol] = useState("");
 	const [payoutAssetAddress, setPayoutAssetAddress] = useState("");
 	const [longVarAddress, setLongVarAddress] = useState("");
@@ -422,7 +428,6 @@ function TradeVarSwap() {
 	const [fee, setFee] = useState("");
 	const [iVolPayout, setIVolPayout] = useState(null);
 	const [iVolRealized, setIVolRealized] = useState(null);
-	const [lengthOfSeries, setLengthOfSeries] = useState(null);
 	const [daysSinceInception, setDaysSinceInception] = useState(null);
 	const [startTimestamp, setStartTimestamp] = useState("");
 
@@ -462,6 +467,8 @@ function TradeVarSwap() {
 	const [balanceRewardsToken, setBalanceRewardsToken] = useState("");
 	const [minPayoutRewards, setMinPayoutRewards] = useState("");
 
+	const [helperButtonState, setHelperButtonState] = useState(null);
+
 	const SwapAddress: string = window.location.pathname.split('/').slice(-1)[0];
 
 	useEffect(() => {
@@ -499,6 +506,7 @@ function TradeVarSwap() {
 				setMaxPayout(cap.toString());
 				payoutAtVarianceOf1 = new BN(await VarSwapContract.methods.payoutAtVarianceOf1().call());
 				let volAtMax = Math.sqrt(cap.div(cap.gcd(payoutAtVarianceOf1)).toNumber()/payoutAtVarianceOf1.div(cap.gcd(payoutAtVarianceOf1)).toNumber());
+				setPayoutAtVarianceOf1(payoutAtVarianceOf1.toString());
 				setIVolPayout(volAtMax);
 			}
 			if (startTimestamp === "") {
@@ -514,7 +522,6 @@ function TradeVarSwap() {
 				setLongVarAddress(_longVarAddress);
 				setShortVarAddress(_shortVarAddress);
 				setClaimVarianceReady(_claimVarianceReady);
-				setLengthOfSeries(parseInt(_lengthOfSeries));
 				let intervalsCalculated: number = dailyReturnsStrings.length;
 				let dailyReturns: number[] = new Array(intervalsCalculated);
 
@@ -614,8 +621,6 @@ function TradeVarSwap() {
 
 				let expired = currentTime > parseInt(endStakingTimestamp);
 
-				var CurrentTotalRewardsTokens;
-
 				var minTotalRewardsPayout = new BN(0);
 
 				var maxTotalSupplyRewardToken = new BN(0);
@@ -713,6 +718,135 @@ function TradeVarSwap() {
 			</div>
 		);
 
+	var outputFromHelpButtons;
+	if (helperButtonState === 1){
+		let volatility = parseFloat(amountString);
+		let variance = Math.pow(volatility/100, 2);
+		let uncappedLVT = variance * parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let cappedLVT = Math.min(1.0, uncappedLVT);
+		let SVT = 1.0 - cappedLVT;
+		outputFromHelpButtons = (
+			<div>
+				<h2>
+					With Volatility of {volatility.toPrecision(6)}%,
+					the Variance is {variance.toPrecision(6)},
+					the uncapped payout of each LVT is {uncappedLVT.toPrecision(6)},
+					the capped payout of each LVT is {cappedLVT.toPrecision(6)},
+					and the payout of each SVT is {SVT.toPrecision(6)}
+				</h2>
+			</div>
+		);
+	}
+	else if (helperButtonState === 2) {
+		let variance = parseFloat(amountString);
+		let volatility = Math.sqrt(variance)*100.0;
+		let uncappedLVT = variance * parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let cappedLVT = Math.min(1.0, uncappedLVT);
+		let SVT = 1.0 - cappedLVT;
+		outputFromHelpButtons = (
+			<div>
+				<h2>
+					With Variance of {variance.toPrecision(6)},
+					Volatility is {volatility.toPrecision(6)}%,
+					the uncapped payout of each LVT is {uncappedLVT.toPrecision(6)},
+					the capped payout of each LVT is {cappedLVT.toPrecision(6)},
+					and the payout of each SVT is {SVT.toPrecision(6)}
+				</h2>
+			</div>
+		);
+	}
+	else if (helperButtonState === 3) {
+		let uncappedLVT = parseFloat(amountString);
+		let variance = uncappedLVT / parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let volatility = Math.sqrt(variance)*100.0;
+		let cappedLVT = Math.min(1.0, uncappedLVT);
+		let SVT = 1.0 - cappedLVT;
+		outputFromHelpButtons = (
+			<div>
+				<h2>
+					With an uncapped payout of each LVT of {uncappedLVT.toPrecision(6)},
+					the capped payout of each LVT is {cappedLVT.toPrecision(6)},
+					the payout of each SVT is {SVT.toPrecision(6)},
+					the Variance is {variance.toPrecision(6)},
+					and the Volatility is {volatility.toPrecision(6)}%
+				</h2>
+			</div>
+		);
+	}	
+
+	else if (helperButtonState === 4) {
+		let SVT = parseFloat(amountString);
+		let LVT = 1.0 - SVT;
+		let variance = LVT / parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let volatility = Math.sqrt(variance)*100.0;
+		if (SVT <= 1.0)
+			outputFromHelpButtons = (
+				<div>
+					<h2>
+						With a SVT payout of {SVT.toPrecision(6)},
+						the payout of each LVT is {LVT.toPrecision(6)},
+						the Variance is {variance.toPrecision(6)},
+						and the Volatility is {volatility.toPrecision(6)}%
+					</h2>
+				</div>
+			);
+		else
+			outputFromHelpButtons = (<h2>Payout of SVT can never be more than 1.0</h2>)
+	}
+
+	else if (helperButtonState === 5) {
+		let LVT_SVT = parseFloat(amountString);
+		/*
+			LVT/SVT == LVT_SVT
+			LVT + SVT == 1.0
+			LVT == 1.0 - SVT
+			(1.0-SVT)/SVT == LVT_SVT
+			(1.0-SVT) == LVT_SVT * SVT
+			1.0 == LVT_SVT * SVT + SVT
+			1.0 == SVT * (LVT_SVT + 1.0)
+			SVT == 1.0 / (LVT_SVT + 1.0)
+		*/
+		let SVT = 1.0 / (LVT_SVT + 1.0);
+		let LVT = 1.0 - SVT;
+		let variance = LVT / parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let volatility = Math.sqrt(variance)*100.0;
+		if (SVT <= 1.0)
+			outputFromHelpButtons = (
+				<div>
+					<h2>
+						With a LVT/SVT payout ratio of {LVT_SVT.toPrecision(6)},
+						the payout of each SVT is {SVT.toPrecision(6)},
+						the payout of each LVT is {LVT.toPrecision(6)},
+						the Variance is {variance.toPrecision(6)},
+						and the Volatility is {volatility.toPrecision(6)}%
+					</h2>
+				</div>
+			);
+		else
+			outputFromHelpButtons = (<h2>SVT can never be more than 1.0</h2>)
+	}
+
+	else
+		outputFromHelpButtons = (
+			<div></div>
+		);
+
+	const helperButtons = (
+			<div>
+				<div className="buttonBox">
+					<button onClick={() => setHelperButtonState(1)}>Volatility(%) to Payout</button>
+					<button onClick={() => setHelperButtonState(2)}>Variance to Payout</button>
+				</div>
+				<div className="_3buttonBox">
+
+					<button onClick={() => setHelperButtonState(3)}>Price (LVT/{payoutAssetSymbol}) to break even Volatility and Variance</button>
+					<button onClick={() => setHelperButtonState(4)}>Price (SVT/{payoutAssetSymbol}) to break even Volatility and Variance</button>
+					<button onClick={() => setHelperButtonState(5)}>Price (LVT/SVT) to break even Volatility and Variance</button>
+				</div>
+				{outputFromHelpButtons}
+			</div>
+		);
+
 	const mainButtons = claimVarianceReady ? 
 		(
 			<div>
@@ -742,7 +876,7 @@ function TradeVarSwap() {
 				<br />
 
 				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(event.target.value)}}/>
+				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {console.log(typeof event.target.value); setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -800,7 +934,6 @@ function TradeVarSwap() {
 				<div className="spanButton">
 					<button onClick={() => endStakes(context, 0, (stakes0 === null ? 0 : stakes0.length), `LVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>End All Stakes</button>
 				</div>
-
 			</div>
 		)
 		:
@@ -812,7 +945,7 @@ function TradeVarSwap() {
 					<button onClick={() => endStakes(context, 0, (stakes0 === null ? 0 : stakes0.length), `LVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>End All Stakes</button>
 				</div>
 				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(event.target.value)}}/>
+				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -856,7 +989,7 @@ function TradeVarSwap() {
 				</div>
 
 				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(event.target.value)}}/>
+				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -900,7 +1033,7 @@ function TradeVarSwap() {
 				</div>
 
 				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(event.target.value)}}/>
+				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -922,6 +1055,10 @@ function TradeVarSwap() {
 
 			{rewardsButtons}
 			{mainButtons}
+
+			<br />
+
+			{helperButtons}
 
 			<br />
 

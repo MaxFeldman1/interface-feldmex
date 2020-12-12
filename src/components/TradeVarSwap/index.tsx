@@ -476,22 +476,27 @@ function TradeVarSwap() {
 
 		async function asyncUseEffect() {
 
-			if (balanceLong === "")
+			if (balanceLong === "" && context.connectorName !== "Infura")
 				setBalanceLong(await VarSwapContract.methods.balanceLong(context.account).call());
-			if (balanceShort === "")
+			if (balanceShort === "" && context.connectorName !== "Infura")
 				setBalanceShort(await VarSwapContract.methods.balanceShort(context.account).call());
-			if (balancePayout === ""){
+			if (payoutAssetAddress === ""){
 				var _payoutAssetAddress = await VarSwapContract.methods.payoutAssetAddress().call();
 				var payoutAssetContract = new context.library.eth.Contract(ERC20Abi, _payoutAssetAddress);
 				setPayoutAssetAddress(_payoutAssetAddress);
-				const [_symbol, _balance, _approval] = await Promise.all([
-						payoutAssetContract.methods.symbol().call(),
-						payoutAssetContract.methods.balanceOf(context.account).call(),
-						payoutAssetContract.methods.allowance(context.account, SwapAddress).call()
-					]);
-				setPayoutAssetSymbol(_symbol);
-				setBalancePayout(_balance);
-				setApprovalPayout(_approval);
+				if (context.connectorName !== "Infura") {
+					const [_symbol, _balance, _approval] = await Promise.all([
+							payoutAssetContract.methods.symbol().call(),
+							payoutAssetContract.methods.balanceOf(context.account).call(),
+							payoutAssetContract.methods.allowance(context.account, SwapAddress).call()
+						]);
+					setPayoutAssetSymbol(_symbol);
+					setBalancePayout(_balance);
+					setApprovalPayout(_approval);
+				}
+			}
+			if (payoutAssetAddress !== "" && context.connectorName === "Infura" && payoutAssetSymbol === "") {
+				setPayoutAssetSymbol(await (new context.library.eth.Contract(ERC20Abi, payoutAssetAddress)).methods.symbol().call());
 			}
 			if (fee === "") {
 				setFee(await VarSwapContract.methods.fee().call());
@@ -585,7 +590,7 @@ function TradeVarSwap() {
 
 				setReloadStakes(true);
 			}
-			if (reloadStakes) {
+			if (reloadStakes && context.connectorName !== "Infura") {
 				setReloadStakes(false);
 
 				var userRewardsTokensBalance;

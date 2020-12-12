@@ -23,9 +23,6 @@ function Web3Loading(props: _props) {
 
 	}, [context, props.location]);
 
-
-	console.log(props.location);
-
 	var currentlyUsingWeb3 = isUsingWeb3();
 
 	if (!context.active && !context.error && currentlyUsingWeb3) {
@@ -46,7 +43,7 @@ function Web3Loading(props: _props) {
 		return (
 			<div className="content">
 				<h1 className="header">
-					Hey Degen U Got a Web3 Error
+					Web3 Error
 				</h1>
 				<h1 className="subHeader">
 					Ensure Meta Mask is Enabled and on the Kovan Network

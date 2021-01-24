@@ -3,6 +3,7 @@ import {Route, Switch, BrowserRouter as Router} from 'react-router-dom';
 import { Connectors } from 'web3-react';
 import Web3Provider from 'web3-react';
 import { withRouter } from 'react-router';
+import { Helmet } from 'react-helmet';
 import Web3 from 'web3';
 
 import Header from './components/Header';
@@ -22,21 +23,27 @@ const connectors = {MetaMask, Infura};
 
 function App() {
   return (
-	<Router>
-			<Web3Provider
-				connectors={connectors}
-				libraryName={'web3.js'}
-				web3Api={Web3}
-			>
-					<Header />
-					<Web3Loading />
-					<Route exact path="/" component={Home}/>
-					<Route exact path="/trade/:swapAddress" component={TradeVarSwap}/>
-					<Route exact path="/About" component={About}/>
+	<div>
+		<Helmet>
+	  		<title>Feldmex Variance Swaps</title>
+	  	</Helmet>
 
-					<Footer />
-			</ Web3Provider>
-	</Router>
+		  <Router>
+				<Web3Provider
+					connectors={connectors}
+					libraryName={'web3.js'}
+					web3Api={Web3}
+				>
+						<Header />
+						<Web3Loading />
+						<Route exact path="/" component={Home}/>
+						<Route exact path="/trade/:swapAddress" component={TradeVarSwap}/>
+						<Route exact path="/About" component={About}/>
+
+						<Footer />
+				</ Web3Provider>
+		</Router>
+  	</div>
   );
 }
 

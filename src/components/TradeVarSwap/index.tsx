@@ -156,9 +156,9 @@ async function mintSwaps(
 	context: any,
 	amountString: string,
 	approvalPayout: string,
+	balancePayout: string,
 	symbol: string,
 	fee: string,
-	cap: string,
 	setBalanceLong: Function,
 	setBalanceShort: Function,
 	setBalancePayout: Function
@@ -173,26 +173,27 @@ async function mintSwaps(
 
 	let BN = context.library.utils.BN;
 
-	const amtATknIn = (new BN(forwardAdjString)).mul(new BN(cap)).div((new BN(10)).pow(new BN(18)));
-
-	const feeAdjForwardString = (new BN(amtATknIn)).mul(new BN(10000 + parseInt(fee))).div(new BN(10000)).toString();
-	
 	if ((new BN(forwardAdjString)).cmp(new BN(0)) < 1) {
 		alert(`You can only mint a positive number of swaps`);
 		return;
 	}
 
-	if ((new BN(feeAdjForwardString)).cmp(new BN(approvalPayout)) === 1) {
-		alert(`Before you mint ${amountString} swaps you must approve ${getBalanceString(feeAdjForwardString, 18)} ${symbol}`);
+	if ((new BN(forwardAdjString)).cmp(new BN(approvalPayout)) === 1) {
+		alert(`First approve ${amountString} ${symbol} to be spent`);
+		return;
+	}
+
+	if ((new BN(forwardAdjString)).cmp(new BN(balancePayout)) === 1) {
+		alert(`Insufficient balance ${symbol}`);
 		return;
 	}
 
 	let caught = false;
 
-	alert(`You will be prompted to mint ${amountString} long and short variance swaps for ${getBalanceString(feeAdjForwardString, 18)} ${symbol}`);
+	alert(`You will be prompted to spend ${amountString} ${symbol} to mint long and short variance swaps with a ${getBalanceString(fee, 2)}% fee`);
 
 	try {
-		await VarSwapContract.methods.mintVariance(context.account, feeAdjForwardString).send({from: context.account});
+		await VarSwapContract.methods.mintVariance(context.account, forwardAdjString).send({from: context.account});
 	} catch (err) {caught = true; alert('Transaction Failed');}
 
 	if (!caught) {
@@ -864,8 +865,13 @@ function TradeVarSwap() {
 				<br />
 
 				<div className="buttonBox">
-					<button onClick={() => mintSwaps(context, amountString, approvalPayout, payoutAssetSymbol, fee, cap, setBalanceLong, setBalanceShort, setBalancePayout)}>Mint Swaps</button>
-					<button onClick={() => burnSwaps(context, amountString, balanceLong, balanceShort, payoutAssetSymbol, setBalanceLong, setBalanceShort, setBalancePayout)}>Burn Swaps</button>
+					<button onClick={() => mintSwaps(context, amountString, approvalPayout, balancePayout, payoutAssetSymbol, fee, setBalanceLong, setBalanceShort, setBalancePayout)}>
+						Mint Swaps from {amountString} {payoutAssetSymbol}
+					</button>
+
+					<button onClick={() => burnSwaps(context, amountString, balanceLong, balanceShort, payoutAssetSymbol, setBalanceLong, setBalanceShort, setBalancePayout)}>
+						Burn {amountString} Swaps
+					</button>
 				</div>
 
 				<br />

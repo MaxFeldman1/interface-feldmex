@@ -3,9 +3,11 @@ import '../Home/Home.css';
 import { useWeb3Context } from 'web3-react'
 import VarSwapInfo from '../VarSwapInfo';
 import { abi as VarSwapHandlerAbi } from '../../abi/varianceSwapHandler.js';
-import { abi as OracleAbi } from '../../abi/oracle.js';
+import { abi as OracleContainerAbi } from '../../abi/OracleContainer.js';
 import { abi as ERC20Abi } from '../../abi/ERC20.js';
 import { abi as StakeHubAbi } from '../../abi/stakeHub.js';
+import { abi as LendingPoolAbi } from '../../abi/LendingPool.js';
+import { abi as ATokenAbi } from '../../abi/IAToken.js';
 
 const secondsPerDay = 24*60*60;
 
@@ -108,6 +110,7 @@ function getAmountFromAdjustedString(str: string, decimals: number): string {
 	var counter = 0;
 	for(;counter<ret.length&&ret[counter]==='0';counter++){}
 	ret = ret.substring(counter);
+	if (ret === "") ret = "0";
 	return ret;
 }
 
@@ -123,6 +126,11 @@ interface _BN {
 
 async function approvePayoutAsset(context: any, amountString: string, payoutAssetAddress: string, payoutAssetSymbol: string, setApproval: Function) {
 	if (!context.active || context.error) return;
+
+	if(amountString === "") {
+		alert('Please enter valid amount');
+		return;
+	}
 
 	alert(`You will be prompted to approve to approve ${amountString} ${payoutAssetSymbol}`);
 
@@ -150,6 +158,7 @@ async function mintSwaps(
 	approvalPayout: string,
 	symbol: string,
 	fee: string,
+	cap: string,
 	setBalanceLong: Function,
 	setBalanceShort: Function,
 	setBalancePayout: Function
@@ -164,9 +173,16 @@ async function mintSwaps(
 
 	let BN = context.library.utils.BN;
 
-	const feeAdjForwardString = (new BN(forwardAdjString)).mul(new BN(10000 + parseInt(fee))).div(new BN(10000)).toString();
+	const amtATknIn = (new BN(forwardAdjString)).mul(new BN(cap)).div((new BN(10)).pow(new BN(18)));
 
-	if ((new BN(forwardAdjString)).cmp(new BN(approvalPayout)) === 1) {
+	const feeAdjForwardString = (new BN(amtATknIn)).mul(new BN(10000 + parseInt(fee))).div(new BN(10000)).toString();
+	
+	if ((new BN(forwardAdjString)).cmp(new BN(0)) < 1) {
+		alert(`You can only mint a positive number of swaps`);
+		return;
+	}
+
+	if ((new BN(feeAdjForwardString)).cmp(new BN(approvalPayout)) === 1) {
 		alert(`Before you mint ${amountString} swaps you must approve ${getBalanceString(feeAdjForwardString, 18)} ${symbol}`);
 		return;
 	}
@@ -176,7 +192,7 @@ async function mintSwaps(
 	alert(`You will be prompted to mint ${amountString} long and short variance swaps for ${getBalanceString(feeAdjForwardString, 18)} ${symbol}`);
 
 	try {
-		await VarSwapContract.methods.mintVariance(context.account, forwardAdjString, true).send({from: context.account});
+		await VarSwapContract.methods.mintVariance(context.account, feeAdjForwardString).send({from: context.account});
 	} catch (err) {caught = true; alert('Transaction Failed');}
 
 	if (!caught) {
@@ -205,6 +221,11 @@ async function burnSwaps(
 	const forwardAdjString = getAmountFromAdjustedString(amountString, 18);
 
 	let BN = context.library.utils.BN;
+
+	if ((new BN(forwardAdjString)).cmp(new BN(0)) < 1) {
+		alert(`You can only burn a positive number of swaps`);
+		return;
+	}
 
 	if ((new BN(forwardAdjString)).cmp(new BN(balanceLong)) === 1) {
 		alert(`Before you brun ${amountString} swaps you must have at least ${amountString} long variance swap tokens`);
@@ -318,7 +339,12 @@ async function approveLPToken(
 	) {
 	if (!context.active || context.error) return;
 
-	const forwardAdjString = getAmountFromAdjustedString(amountString, 18);
+	if(amountString === "") {
+		alert('Please enter valid amount');	
+		return;                            	
+	}                                          	
+
+	var forwardAdjString = getAmountFromAdjustedString(amountString, 18);
 
 	let caught = false;
 
@@ -347,8 +373,12 @@ async function startStake(
 
 	const forwardAdjString = getAmountFromAdjustedString(amountString, 18);
 
-
 	let BN = context.library.utils.BN;
+
+	if ((new BN(forwardAdjString)).cmp(new BN(0)) < 1) {
+		alert(`You can only stake a positive number of liquidity tokens`);
+		return;
+	}
 
 	if ((new BN(forwardAdjString)).cmp(new BN(balanceLPTkn)) === 1) {
 		alert(`Before you stake ${amountString} ${LPTknSymbol} Liquidity Tokens you must hold at least ${amountString} ${LPTknSymbol} Liquidity Tokens`);
@@ -429,6 +459,7 @@ function TradeVarSwap() {
 	const [daysSinceInception, setDaysSinceInception] = useState(null);
 	const [startTimestamp, setStartTimestamp] = useState("");
 
+	const [cap, setCap] = useState("");
 
 	const [amountString, setAmountString] = useState("");
 	const [approvalPayout, setApprovalPayout] = useState("");
@@ -501,16 +532,22 @@ function TradeVarSwap() {
 			if (fee === "") {
 				setFee(await VarSwapContract.methods.fee().call());
 			}
-			if (maxPayout === "") {
+			if (maxPayout === "" && payoutAssetAddress !== "") {
 				let BN = context.library.utils.BN;
-				let cap: _BN;
+				let _cap: _BN;
 				let payoutAtVarianceOf1: _BN;
-				cap = new BN(await VarSwapContract.methods.cap().call());
-				setMaxPayout(cap.toString());
+				_cap = new BN(await VarSwapContract.methods.cap().call());
+				let lendingPoolContract = new context.library.eth.Contract(LendingPoolAbi, await VarSwapContract.methods.lendingPoolAddress().call());
+				//the address of the asset that the aToken settles to
+				let underlyingAssetAddress = await (new context.library.eth.Contract(ATokenAbi, payoutAssetAddress))
+					.methods.UNDERLYING_ASSET_ADDRESS().call();
+				let reserveNormalizedIncome = new BN(await lendingPoolContract.methods.getReserveNormalizedIncome(underlyingAssetAddress).call());
+				setMaxPayout(_cap.mul(reserveNormalizedIncome).div((new BN(10)).pow(new BN(27))).toString());
 				payoutAtVarianceOf1 = new BN(await VarSwapContract.methods.payoutAtVarianceOf1().call());
-				let volAtMax = Math.sqrt(cap.div(cap.gcd(payoutAtVarianceOf1)).toNumber()/payoutAtVarianceOf1.div(cap.gcd(payoutAtVarianceOf1)).toNumber());
-				setPayoutAtVarianceOf1(payoutAtVarianceOf1.toString());
+				let volAtMax = Math.sqrt(_cap.div(_cap.gcd(payoutAtVarianceOf1)).toNumber()/payoutAtVarianceOf1.div(_cap.gcd(payoutAtVarianceOf1)).toNumber());
+				setPayoutAtVarianceOf1(payoutAtVarianceOf1.mul(reserveNormalizedIncome).div((new BN(10)).pow(new BN(27))).toString());
 				setIVolPayout(volAtMax);
+				setCap(_cap.toString());
 			}
 			if (startTimestamp === "") {
 				const [_longVarAddress, _shortVarAddress, _lengthOfSeries, _startTimestamp, dailyReturnsStrings, _claimVarianceReady] = await Promise.all([
@@ -538,7 +575,7 @@ function TradeVarSwap() {
 
 				let currentTime = Math.floor((new Date()).getTime()/1000);
 				if (currentTime-_startTimestamp > 2*secondsPerDay) {
-					var oracleContract = new context.library.eth.Contract(OracleAbi, await VarSwapContract.methods.oracleAddress().call());
+					var oracleContract = new context.library.eth.Contract(OracleContainerAbi, await VarSwapContract.methods.oracleContainerAddress().call());
 					var firstVarianceTS = _startTimestamp + (1+intervalsCalculated)*secondsPerDay;
 					var length: number;
 					if (currentTime > firstVarianceTS) {
@@ -548,9 +585,11 @@ function TradeVarSwap() {
 						if (length < 2) length = 0;
 					} else length = 0;
 					priceSeries = Array(length);
+					let phrase = await VarSwapContract.methods.phrase();
 					for (let i = 0, measureAt = firstVarianceTS-secondsPerDay; i < length; i++, measureAt += secondsPerDay){
-						priceSeries[i] = await oracleContract.methods.fetchSpotAtTime(measureAt).call();
+						priceSeries[i] = oracleContract.methods.phraseToHistoricalPrice(phrase, measureAt).call();
 					}
+					priceSeries = await Promise.all(priceSeries);
 					let annualizedRealVariance: number = getRealizedVariance(priceSeries, dailyReturns);
 					let annualizedRealVolatility: number = Math.sqrt(annualizedRealVariance);
 					length = Math.floor((currentTime-_startTimestamp)/secondsPerDay)-1;
@@ -624,38 +663,6 @@ function TradeVarSwap() {
 
 				let expired = currentTime > parseInt(endStakingTimestamp);
 
-				var minTotalRewardsPayout = new BN(0);
-
-				var maxTotalSupplyRewardToken = new BN(0);
-
-				var promise;
-				if (expired) {
-					promise = Promise.all([
-						(new context.library.eth.Contract(ERC20Abi, payoutAssetAddress)).methods.balanceOf(stakeContract._address).call(),
-						stakeContract.methods.totalSupply().call()
-					]).then((res: string[]) => {
-						minTotalRewardsPayout = new BN(res[0]);
-						maxTotalSupplyRewardToken = new BN(res[1]);
-					});
-				} else {
-					let maxTimeStaked = parseInt(startTimestamp) - parseInt(lastStakingTimestamp);
-					promise = Promise.all([
-						lpTkn0.methods.totalSupply().call(),
-						lpTkn1.methods.totalSupply().call(),
-						lpTkn2.methods.totalSupply().call(),
-						stakeContract.methods.totalSupply().call(),
-						(new context.library.eth.Contract(ERC20Abi, payoutAssetAddress)).methods.balanceOf(stakeContract._address).call(),
-					]).then((res: string[]) => {
-						var maxTkn0Rewards = (new BN(res[0])).mul(new BN(inflator0));
-						var maxTkn1Rewards = (new BN(res[1])).mul(new BN(inflator1));
-						var maxTkn2Rewards = (new BN(res[2])).mul(new BN(inflator2));
-						maxTotalSupplyRewardToken = maxTkn0Rewards.add(maxTkn1Rewards).add(maxTkn2Rewards);
-						maxTotalSupplyRewardToken = maxTotalSupplyRewardToken.mul((new BN(maxTimeStaked)).pow(new BN(2))).div((new BN(secondsPerDay)).pow(new BN(2)));
-						maxTotalSupplyRewardToken = maxTotalSupplyRewardToken.add(new BN(res[3]));
-						minTotalRewardsPayout = new BN(res[4]);
-					});
-				}
-
 				var stats = await stakeContract.methods.getStats().call({from: context.account});
 				var stakes0 = new Array(parseInt(stats._lenStakes0));
 				var stakes1 = new Array(parseInt(stats._lenStakes1));
@@ -671,23 +678,6 @@ function TradeVarSwap() {
 					stakes2[i] = stakeContract.methods.stakes2(context.account, i).call();
 				}
 				var results = await Promise.all([Promise.all(stakes2), Promise.all(stakes2), Promise.all(stakes2)]);
-
-				var userMaxRewardsTokens = maxRewardsAllStakes(
-					BN,
-					lastStakingTimestamp,
-					inflator0,
-					inflator1,
-					inflator2,
-					results[0],
-					results[1],
-					results[2]
-				).add(new BN(userRewardsTokensBalance));
-				await promise;
-				//10% goes to contract owner
-				minTotalRewardsPayout = minTotalRewardsPayout.mul(new BN(9)).div(new BN(10));
-				var minUserRewards = userMaxRewardsTokens.mul(minTotalRewardsPayout).div(maxTotalSupplyRewardToken);
-
-				setMinPayoutRewards(minUserRewards.toString());
 
 				var elements0 = results[0].map((obj, index) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
 				var elements1 = results[1].map((obj, index) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
@@ -715,7 +705,7 @@ function TradeVarSwap() {
 				<h2>Balance Long Variance Tokens(LVT): {getBalanceString(balanceLong, 18)}</h2>
 				<h2>Balance Short Variance Tokens(SVT): {getBalanceString(balanceShort, 18)}</h2>
 				<h2>Balance {payoutAssetSymbol}: {getBalanceString(balancePayout, 18)}</h2>
-				<h2>Max Payout: {getBalanceString(maxPayout,18)} {payoutAssetSymbol}</h2>
+				<h2>Max Payout: {getBalanceString(maxPayout,18)} {payoutAssetSymbol} + interest generated up to maturity</h2>
 				<h2>Implied Annualized Volatility at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%</h2>
 				<h2>Implied Annualized Variance at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%<sup>2</sup> = {(iVolPayout**2).toPrecision(6)}</h2>
 				<h2>Realized Volatility over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%</h2>
@@ -874,7 +864,7 @@ function TradeVarSwap() {
 				<br />
 
 				<div className="buttonBox">
-					<button onClick={() => mintSwaps(context, amountString, approvalPayout, payoutAssetSymbol, fee, setBalanceLong, setBalanceShort, setBalancePayout)}>Mint Swaps</button>
+					<button onClick={() => mintSwaps(context, amountString, approvalPayout, payoutAssetSymbol, fee, cap, setBalanceLong, setBalanceShort, setBalancePayout)}>Mint Swaps</button>
 					<button onClick={() => burnSwaps(context, amountString, balanceLong, balanceShort, payoutAssetSymbol, setBalanceLong, setBalanceShort, setBalancePayout)}>Burn Swaps</button>
 				</div>
 

@@ -1,0 +1,15 @@
+export var abi = [
+    {
+      "inputs": [],
+      "name": "UNDERLYING_ASSET_ADDRESS",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];

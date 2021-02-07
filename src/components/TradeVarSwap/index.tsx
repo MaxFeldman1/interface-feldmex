@@ -46,7 +46,7 @@ function maxRewardsSingleStake(
 	BN: any,
 	secondsRemaining: number,
 	inflator: string,
-	balance: string,
+	balance: string
 	) {
 	return (new BN(inflator)).mul(new BN(balance)).mul((new BN(secondsRemaining)).pow(new BN(2))).div(new BN(secondsPerDay));
 }
@@ -124,7 +124,18 @@ interface _BN {
 	toNumber: Function
 }
 
-async function approvePayoutAsset(context: any, amountString: string, payoutAssetAddress: string, payoutAssetSymbol: string, setApproval: Function) {
+interface stake {
+	amount: string,
+	timestamp: string
+}
+
+async function approvePayoutAsset(
+	context: any,
+	amountString: string,
+	payoutAssetAddress: string,
+	payoutAssetSymbol: string,
+	payoutAssetDecimals: number,
+	setApproval: Function) {
 	if (!context.active || context.error) return;
 
 	if(amountString === "") {
@@ -138,7 +149,7 @@ async function approvePayoutAsset(context: any, amountString: string, payoutAsse
 
 	const SwapAddress: string = window.location.pathname.split('/').slice(-1)[0];
 
-	const forwardAdjString = getAmountFromAdjustedString(amountString, 18);
+	const forwardAdjString = getAmountFromAdjustedString(amountString, payoutAssetDecimals);
 
 	let caught = false;
 
@@ -155,6 +166,7 @@ async function approvePayoutAsset(context: any, amountString: string, payoutAsse
 async function mintSwaps(
 	context: any,
 	amountString: string,
+	payoutAssetDecimals: number,
 	approvalPayout: string,
 	balancePayout: string,
 	symbol: string,
@@ -169,7 +181,7 @@ async function mintSwaps(
 
 	const VarSwapContract = new context.library.eth.Contract(VarSwapHandlerAbi, SwapAddress);
 
-	const forwardAdjString = getAmountFromAdjustedString(amountString, 18);
+	const forwardAdjString = getAmountFromAdjustedString(amountString, payoutAssetDecimals);
 
 	let BN = context.library.utils.BN;
 
@@ -220,7 +232,7 @@ async function burnSwaps(
 	const VarSwapContract = new context.library.eth.Contract(VarSwapHandlerAbi, SwapAddress);
 
 	const forwardAdjString = getAmountFromAdjustedString(amountString, 18);
-
+	
 	let BN = context.library.utils.BN;
 
 	if ((new BN(forwardAdjString)).cmp(new BN(0)) < 1) {
@@ -452,6 +464,7 @@ function TradeVarSwap() {
 	const [payoutAtVarianceOf1, setPayoutAtVarianceOf1] = useState("");
 	const [payoutAssetSymbol, setPayoutAssetSymbol] = useState("");
 	const [payoutAssetAddress, setPayoutAssetAddress] = useState("");
+	const [payoutAssetDecimals, setPayoutAssetDecimals] = useState(0);
 	const [longVarAddress, setLongVarAddress] = useState("");
 	const [shortVarAddress, setShortVarAddress] = useState("");
 	const [fee, setFee] = useState("");
@@ -495,7 +508,6 @@ function TradeVarSwap() {
 	const [reloadStakes, setReloadStakes] = useState(false);
 
 	const [balanceRewardsToken, setBalanceRewardsToken] = useState("");
-	const [minPayoutRewards, setMinPayoutRewards] = useState("");
 
 	const [helperButtonState, setHelperButtonState] = useState(null);
 
@@ -517,15 +529,20 @@ function TradeVarSwap() {
 				var payoutAssetContract = new context.library.eth.Contract(ERC20Abi, _payoutAssetAddress);
 				setPayoutAssetAddress(_payoutAssetAddress);
 				if (context.connectorName !== "Infura") {
-					const [_symbol, _balance, _approval] = await Promise.all([
+					const [_symbol, _balance, _approval, _decimals] = await Promise.all([
 							payoutAssetContract.methods.symbol().call(),
 							payoutAssetContract.methods.balanceOf(context.account).call(),
-							payoutAssetContract.methods.allowance(context.account, SwapAddress).call()
-						]);
+							payoutAssetContract.methods.allowance(context.account, SwapAddress).call(),
+							payoutAssetContract.methods.decimals().call().then((res: string) => parseInt(res))	
+					]);
 					setPayoutAssetSymbol(_symbol);
 					setBalancePayout(_balance);
 					setApprovalPayout(_approval);
+					setPayoutAssetDecimals(_decimals);
 				}
+			}
+			if (payoutAssetAddress !== "" && balancePayout === "" && context.connectorName !== "Infura") {
+				setBalancePayout(await (new context.library.eth.Contract(ERC20Abi, payoutAssetAddress)).methods.balanceOf(context.account).call());
 			}
 			if (payoutAssetAddress !== "" && context.connectorName === "Infura" && payoutAssetSymbol === "") {
 				setPayoutAssetSymbol(await (new context.library.eth.Contract(ERC20Abi, payoutAssetAddress)).methods.symbol().call());
@@ -538,10 +555,12 @@ function TradeVarSwap() {
 				let _cap: _BN;
 				let payoutAtVarianceOf1: _BN;
 				_cap = new BN(await VarSwapContract.methods.cap().call());
-				let lendingPoolContract = new context.library.eth.Contract(LendingPoolAbi, await VarSwapContract.methods.lendingPoolAddress().call());
 				//the address of the asset that the aToken settles to
-				let underlyingAssetAddress = await (new context.library.eth.Contract(ATokenAbi, payoutAssetAddress))
-					.methods.UNDERLYING_ASSET_ADDRESS().call();
+				let payoutAssetContract = new context.library.eth.Contract(ATokenAbi, payoutAssetAddress);
+				let underlyingAssetAddress = await payoutAssetContract.methods.UNDERLYING_ASSET_ADDRESS().call();
+				let scaledContractBal = await payoutAssetContract.methods.scaledBalanceOf(VarSwapContract._address).call();
+				let nonScaledContractBal = await payoutAssetContract.methods.balanceOf(VarSwapContract._address).call();
+				let lendingPoolContract = new context.library.eth.Contract(LendingPoolAbi, await payoutAssetContract.methods.POOL().call());
 				let reserveNormalizedIncome = new BN(await lendingPoolContract.methods.getReserveNormalizedIncome(underlyingAssetAddress).call());
 				setMaxPayout(_cap.mul(reserveNormalizedIncome).div((new BN(10)).pow(new BN(27))).toString());
 				payoutAtVarianceOf1 = new BN(await VarSwapContract.methods.payoutAtVarianceOf1().call());
@@ -573,12 +592,12 @@ function TradeVarSwap() {
 						dailyReturns[i] = parseFloat(getBalanceString(dailyReturnsStrings[i],36));
 				}
 				let priceSeries = [];
-
 				let currentTime = Math.floor((new Date()).getTime()/1000);
 				if (currentTime-_startTimestamp > 2*secondsPerDay) {
-					var oracleContract = new context.library.eth.Contract(OracleContainerAbi, await VarSwapContract.methods.oracleContainerAddress().call());
+					var OracleContainerContract = new context.library.eth.Contract(OracleContainerAbi, await VarSwapContract.methods.oracleContainerAddress().call());
 					var firstVarianceTS = _startTimestamp + (1+intervalsCalculated)*secondsPerDay;
 					var length: number;
+					
 					if (currentTime > firstVarianceTS) {
 						length= 1 + Math.ceil((currentTime-firstVarianceTS)/secondsPerDay);
 						var lengthOfPriceSeriesRemaining: number = 1 + _lengthOfSeries - intervalsCalculated;
@@ -586,9 +605,9 @@ function TradeVarSwap() {
 						if (length < 2) length = 0;
 					} else length = 0;
 					priceSeries = Array(length);
-					let phrase = await VarSwapContract.methods.phrase();
+					let phrase = await VarSwapContract.methods.phrase().call();
 					for (let i = 0, measureAt = firstVarianceTS-secondsPerDay; i < length; i++, measureAt += secondsPerDay){
-						priceSeries[i] = oracleContract.methods.phraseToHistoricalPrice(phrase, measureAt).call();
+						priceSeries[i] = OracleContainerContract.methods.phraseToHistoricalPrice(phrase, measureAt).call().then((res: any) => res.spot);
 					}
 					priceSeries = await Promise.all(priceSeries);
 					let annualizedRealVariance: number = getRealizedVariance(priceSeries, dailyReturns);
@@ -664,25 +683,11 @@ function TradeVarSwap() {
 
 				let expired = currentTime > parseInt(endStakingTimestamp);
 
-				var stats = await stakeContract.methods.getStats().call({from: context.account});
-				var stakes0 = new Array(parseInt(stats._lenStakes0));
-				var stakes1 = new Array(parseInt(stats._lenStakes1));
-				var stakes2 = new Array(parseInt(stats._lenStakes2));
-
-				for (let i = 0; i < stakes0.length; i++) {
-					stakes0[i] = stakeContract.methods.stakes0(context.account, i).call();
-				}
-				for (let i = 0; i < stakes1.length; i++) {
-					stakes1[i] = stakeContract.methods.stakes1(context.account, i).call();
-				}
-				for (let i = 0; i < stakes2.length; i++) {
-					stakes2[i] = stakeContract.methods.stakes2(context.account, i).call();
-				}
-				var results = await Promise.all([Promise.all(stakes2), Promise.all(stakes2), Promise.all(stakes2)]);
-
-				var elements0 = results[0].map((obj, index) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
-				var elements1 = results[1].map((obj, index) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
-				var elements2 = results[2].map((obj, index) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
+				var results = await stakeContract.methods.allStakes(context.account).call();
+				
+				var elements0 = results._stakes0.map((obj: stake, index: number) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
+				var elements1 = results._stakes1.map((obj: stake, index: number) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
+				var elements2 = results._stakes2.map((obj: stake, index: number) => (<li key={index}>{getBalanceString(obj.amount, 18)} LP token stake started at {getDateFormat(obj.timestamp)}</li>));
 
 				setStakes0(elements0);
 				setStakes1(elements1);
@@ -705,8 +710,8 @@ function TradeVarSwap() {
 				<VarSwapInfo address={SwapAddress} link={false}/>
 				<h2>Balance Long Variance Tokens(LVT): {getBalanceString(balanceLong, 18)}</h2>
 				<h2>Balance Short Variance Tokens(SVT): {getBalanceString(balanceShort, 18)}</h2>
-				<h2>Balance {payoutAssetSymbol}: {getBalanceString(balancePayout, 18)}</h2>
-				<h2>Max Payout: {getBalanceString(maxPayout,18)} {payoutAssetSymbol} + interest generated up to maturity</h2>
+				<h2>Balance {payoutAssetSymbol}: {getBalanceString(balancePayout, payoutAssetDecimals)}</h2>
+				<h2>Max Payout: {getBalanceString(maxPayout, payoutAssetDecimals)} {payoutAssetSymbol} + interest generated up to maturity</h2>
 				<h2>Implied Annualized Volatility at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%</h2>
 				<h2>Implied Annualized Variance at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%<sup>2</sup> = {(iVolPayout**2).toPrecision(6)}</h2>
 				<h2>Realized Volatility over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%</h2>
@@ -718,9 +723,10 @@ function TradeVarSwap() {
 	if (helperButtonState === 1){
 		let volatility = parseFloat(amountString);
 		let variance = Math.pow(volatility/100, 2);
-		let uncappedLVT = variance * parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
-		let cappedLVT = Math.min(1.0, uncappedLVT);
-		let SVT = 1.0 - cappedLVT;
+		let uncappedLVT = variance * parseFloat(getBalanceString(payoutAtVarianceOf1, payoutAssetDecimals));
+		let _maxPayout = parseFloat(getBalanceString(maxPayout, payoutAssetDecimals));
+		let cappedLVT = Math.min(_maxPayout, uncappedLVT);
+		let SVT = _maxPayout - cappedLVT;
 		outputFromHelpButtons = (
 			<div>
 				<h2>
@@ -736,9 +742,10 @@ function TradeVarSwap() {
 	else if (helperButtonState === 2) {
 		let variance = parseFloat(amountString);
 		let volatility = Math.sqrt(variance)*100.0;
-		let uncappedLVT = variance * parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
-		let cappedLVT = Math.min(1.0, uncappedLVT);
-		let SVT = 1.0 - cappedLVT;
+		let uncappedLVT = variance * parseFloat(getBalanceString(payoutAtVarianceOf1, payoutAssetDecimals));
+		let _maxPayout = parseFloat(getBalanceString(maxPayout, payoutAssetDecimals));
+		let cappedLVT = Math.min(_maxPayout, uncappedLVT);
+		let SVT = _maxPayout - cappedLVT;
 		outputFromHelpButtons = (
 			<div>
 				<h2>
@@ -753,10 +760,11 @@ function TradeVarSwap() {
 	}
 	else if (helperButtonState === 3) {
 		let uncappedLVT = parseFloat(amountString);
-		let variance = uncappedLVT / parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let variance = uncappedLVT / parseFloat(getBalanceString(payoutAtVarianceOf1, payoutAssetDecimals));
 		let volatility = Math.sqrt(variance)*100.0;
-		let cappedLVT = Math.min(1.0, uncappedLVT);
-		let SVT = 1.0 - cappedLVT;
+		let _maxPayout = parseFloat(getBalanceString(maxPayout, payoutAssetDecimals));
+		let cappedLVT = Math.min(_maxPayout, uncappedLVT);
+		let SVT = _maxPayout - cappedLVT;
 		outputFromHelpButtons = (
 			<div>
 				<h2>
@@ -772,10 +780,11 @@ function TradeVarSwap() {
 
 	else if (helperButtonState === 4) {
 		let SVT = parseFloat(amountString);
-		let LVT = 1.0 - SVT;
-		let variance = LVT / parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let _maxPayout = parseFloat(getBalanceString(maxPayout, payoutAssetDecimals));
+		let LVT = _maxPayout - SVT;
+		let variance = LVT / parseFloat(getBalanceString(payoutAtVarianceOf1, payoutAssetDecimals));
 		let volatility = Math.sqrt(variance)*100.0;
-		if (SVT <= 1.0)
+		if (SVT <= _maxPayout)
 			outputFromHelpButtons = (
 				<div>
 					<h2>
@@ -787,26 +796,27 @@ function TradeVarSwap() {
 				</div>
 			);
 		else
-			outputFromHelpButtons = (<h2>Payout of SVT can never be more than 1.0</h2>)
+			outputFromHelpButtons = (<h2>Payout of SVT can never be more than {getBalanceString(maxPayout, 18)} + interest generated up to maturity</h2>)
 	}
 
 	else if (helperButtonState === 5) {
 		let LVT_SVT = parseFloat(amountString);
+		let _maxPayout = parseFloat(getBalanceString(maxPayout, payoutAssetDecimals));
 		/*
 			LVT/SVT == LVT_SVT
-			LVT + SVT == 1.0
-			LVT == 1.0 - SVT
-			(1.0-SVT)/SVT == LVT_SVT
-			(1.0-SVT) == LVT_SVT * SVT
-			1.0 == LVT_SVT * SVT + SVT
-			1.0 == SVT * (LVT_SVT + 1.0)
-			SVT == 1.0 / (LVT_SVT + 1.0)
+			LVT + SVT == _maxPayout
+			LVT == _maxPayout - SVT
+			(_maxPayout-SVT)/SVT == LVT_SVT
+			(_maxPayout-SVT) == LVT_SVT * SVT
+			_maxPayout == LVT_SVT * SVT + SVT
+			_maxPayout == SVT * (LVT_SVT + 1.0)
+			SVT == _maxPayout / (LVT_SVT + 1.0)
 		*/
-		let SVT = 1.0 / (LVT_SVT + 1.0);
-		let LVT = 1.0 - SVT;
-		let variance = LVT / parseFloat(getBalanceString(payoutAtVarianceOf1, 18));
+		let SVT = _maxPayout / (LVT_SVT + 1.0);
+		let LVT = _maxPayout - SVT;
+		let variance = LVT / parseFloat(getBalanceString(payoutAtVarianceOf1, payoutAssetDecimals));
 		let volatility = Math.sqrt(variance)*100.0;
-		if (SVT <= 1.0)
+		if (SVT <= _maxPayout)
 			outputFromHelpButtons = (
 				<div>
 					<h2>
@@ -819,7 +829,7 @@ function TradeVarSwap() {
 				</div>
 			);
 		else
-			outputFromHelpButtons = (<h2>SVT can never be more than 1.0</h2>)
+			outputFromHelpButtons = (<h2>SVT can never be more than {_maxPayout} + interest generated up to maturity</h2>);
 	}
 
 	else
@@ -857,7 +867,7 @@ function TradeVarSwap() {
 		(			
 			<div>
 				<div className="spanButton">
-					<button onClick={() => approvePayoutAsset(context, amountString, payoutAssetAddress, payoutAssetSymbol, setApprovalPayout)}>
+					<button onClick={() => approvePayoutAsset(context, amountString, payoutAssetAddress, payoutAssetSymbol, payoutAssetDecimals, setApprovalPayout)}>
 						Approve {payoutAssetSymbol}
 					</button>
 				</div>
@@ -865,7 +875,7 @@ function TradeVarSwap() {
 				<br />
 
 				<div className="buttonBox">
-					<button onClick={() => mintSwaps(context, amountString, approvalPayout, balancePayout, payoutAssetSymbol, fee, setBalanceLong, setBalanceShort, setBalancePayout)}>
+					<button onClick={() => mintSwaps(context, amountString, payoutAssetDecimals, approvalPayout, balancePayout, payoutAssetSymbol, fee, setBalanceLong, setBalanceShort, setBalancePayout)}>
 						Mint Swaps from {amountString} {payoutAssetSymbol}
 					</button>
 
@@ -884,12 +894,6 @@ function TradeVarSwap() {
 	const rewardsInfo = (
 			<div>
 				<h2>Balance Rewards Tokens: {getBalanceString(balanceRewardsToken, 18)}</h2>
-				{
-					balanceRewardsToken !== "0" && balanceRewardsToken !== "" ?
-					<h2>Your Minimum Rewards (If Stakes Close at {getDateFormat(lastStakingTimestamp)}): {getBalanceString(minPayoutRewards, 18)}</h2>
-					:
-					<span></span>
-				}
 			</div>
 		);
 
@@ -910,12 +914,12 @@ function TradeVarSwap() {
 	const pool0HeaderAndLinks =
 		(
 			<div>
-				<h1 className="header">LVT / {payoutAssetSymbol} Uniswap Pool</h1>
+				<h1 className="header">LVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT0, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/swap?inputCurrency="+longVarAddress+"&outputCurrency="+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/add/"+longVarAddress+"/"+payoutAssetAddress}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/remove/"+longVarAddress+"/"+payoutAssetAddress}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);
@@ -953,12 +957,12 @@ function TradeVarSwap() {
 	const pool1HeaderAndLinks =
 		(
 			<div>
-				<h1 className="header">LVT / SVT Uniswap Pool</h1>
+				<h1 className="header">LVT / SVT Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT1, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/swap?inputCurrency="+longVarAddress+"&outputCurrency="+shortVarAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/add/"+longVarAddress+"/"+shortVarAddress}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/remove/"+longVarAddress+"/"+shortVarAddress}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.balancer.exchange/#/swap/"+longVarAddress+"/"+shortVarAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);
@@ -997,12 +1001,12 @@ function TradeVarSwap() {
 	const pool2HeaderAndLinks =
 		(
 			<div>
-				<h1 className="header">SVT / {payoutAssetSymbol} Uniswap Pool</h1>
+				<h1 className="header">SVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT2, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/swap?inputCurrency="+shortVarAddress+"&outputCurrency="+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/add/"+shortVarAddress+"/"+payoutAssetAddress}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://app.uniswap.org/#/remove/"+shortVarAddress+"/"+payoutAssetAddress}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.balancer.exchange/#/swap/"+shortVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);

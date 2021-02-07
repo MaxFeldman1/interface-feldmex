@@ -25,12 +25,12 @@ function About() {
 			dailyMulplicativeReturns = [];
 			var cumulativeVariance = 0;
 			var cumulativeMulplicativeReturns = 0;
-			for (var i = 1; i &lt; priceSeries.length; i++) {
+			for (var i = 1; i < priceSeries.length; i++) {
 				dailyMulplicativeReturns.push((priceSeries[i]/priceSeries[i-1])-1);
 				cumulativeMulplicativeReturns += dailyMulplicativeReturns[i-1];
 			}
 			var meanMulplicativeReturn = cumulativeMulplicativeReturns/dailyMulplicativeReturns.length;
-			for (var i = 0; i &lt; dailyMulplicativeReturns.length; i++) {
+			for (var i = 0; i < dailyMulplicativeReturns.length; i++) {
 				cumulativeVariance += Math.pow(dailyMulplicativeReturns[i]-meanMulplicativeReturn,2);
 			}
 			return 365.2422*cumulativeVariance/(dailyMulplicativeReturns.length-1);
@@ -66,7 +66,8 @@ function About() {
 			<ol>
 				<li>Open Meta Mask</li>
 				<li>Click on the dropdown menu in the top center of the Meta Mask pop up</li>
-				<li>Click on the option titled "Kovan Test Network"</li>
+				<li>For the testnet click on the option titled "Kovan Test Network"</li>
+				<li>For the mainnet version click the option titled "Ethereum Mainnet"</li>
 			</ol>
 		<p>
 			Every time you use the Feldmex be sure that you have Kovan as your selected network.

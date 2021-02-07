@@ -6,7 +6,7 @@ import VarSwapInfo from '../VarSwapInfo';
 import { abi as OrganizerAbi } from '../../abi/organizer.js';
 
 
-const OrganizerAddr = "0x163Ea98618570Ed4ca50C3427e322300c2706e52";
+const OrganizerAddr = "0x78f228ebce534f39b3aee80b9faa4a93251b9eaf";
 
 
 function Home() {

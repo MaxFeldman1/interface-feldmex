@@ -62,7 +62,7 @@ function VarSwapInfo(props: VarSwapProps) {
 	if (props.link)
 		return (<li><Link className="noDec" to={"/trade/"+props.address}>{phrase} Annualized Variance from {getDateFormatNoHours(startDate)} to {getDateFormatNoHours(endDate)}, pays in {paysIn}</Link></li>);
 	else
-		return (<h1 className="subHeader">Annualized Variance from {getDateFormatNoHours(startDate)} to {getDateFormatNoHours(endDate)}, pays in {paysIn}</h1>);
+		return (<h1 className="subHeader">{phrase} Annualized Variance from {getDateFormatNoHours(startDate)} to {getDateFormatNoHours(endDate)}, pays in {paysIn}</h1>);
 }
 
 

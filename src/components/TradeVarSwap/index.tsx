@@ -528,17 +528,20 @@ function TradeVarSwap() {
 				var _payoutAssetAddress = await VarSwapContract.methods.payoutAssetAddress().call();
 				var payoutAssetContract = new context.library.eth.Contract(ERC20Abi, _payoutAssetAddress);
 				setPayoutAssetAddress(_payoutAssetAddress);
+				const [_symbol, _decimals] = await Promise.all([
+					payoutAssetContract.methods.symbol().call(),
+					payoutAssetContract.methods.decimals().call().then((res: string) => parseInt(res))
+
+				]);
+				setPayoutAssetSymbol(_symbol);
+				setPayoutAssetDecimals(_decimals);
 				if (context.connectorName !== "Infura") {
-					const [_symbol, _balance, _approval, _decimals] = await Promise.all([
-							payoutAssetContract.methods.symbol().call(),
+					const [_balance, _approval] = await Promise.all([
 							payoutAssetContract.methods.balanceOf(context.account).call(),
 							payoutAssetContract.methods.allowance(context.account, SwapAddress).call(),
-							payoutAssetContract.methods.decimals().call().then((res: string) => parseInt(res))	
 					]);
-					setPayoutAssetSymbol(_symbol);
 					setBalancePayout(_balance);
 					setApprovalPayout(_approval);
-					setPayoutAssetDecimals(_decimals);
 				}
 			}
 			if (payoutAssetAddress !== "" && balancePayout === "" && context.connectorName !== "Infura") {
@@ -715,7 +718,7 @@ function TradeVarSwap() {
 				<h2>Implied Annualized Volatility at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%</h2>
 				<h2>Implied Annualized Variance at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%<sup>2</sup> = {(iVolPayout**2).toPrecision(6)}</h2>
 				<h2>Realized Volatility over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%</h2>
-				<h2>Realized Volatility over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%<sup>2</sup> = {(iVolRealized**2).toPrecision(6)}</h2>
+				<h2>Realized Variance over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%<sup>2</sup> = {(iVolRealized**2).toPrecision(6)}</h2>
 			</div>
 		);
 
@@ -917,9 +920,9 @@ function TradeVarSwap() {
 				<h1 className="header">LVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT0, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);
@@ -960,9 +963,9 @@ function TradeVarSwap() {
 				<h1 className="header">LVT / SVT Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT1, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.balancer.exchange/#/swap/"+longVarAddress+"/"+shortVarAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://balancer.exchange/#/swap/"+longVarAddress+"/"+shortVarAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);
@@ -1004,9 +1007,9 @@ function TradeVarSwap() {
 				<h1 className="header">SVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT2, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.balancer.exchange/#/swap/"+shortVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://kovan.pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://balancer.exchange/#/swap/"+shortVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);

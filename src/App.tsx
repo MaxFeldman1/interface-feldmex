@@ -16,7 +16,7 @@ import Web3Loading from './components/Web3Loading';
 const { InjectedConnector, NetworkOnlyConnector } = Connectors;
 const MetaMask = new InjectedConnector({ supportedNetworks: [1, 42] });
 const Infura = new NetworkOnlyConnector({
-  providerURL: 'https://kovan.infura.io/v3/130607aa3e804a5a9feab69f92045243'
+  providerURL: 'https://mainnet.infura.io/v3/130607aa3e804a5a9feab69f92045243'
 })
 const connectors = {MetaMask, Infura};
 

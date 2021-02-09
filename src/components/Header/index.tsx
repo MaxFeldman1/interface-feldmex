@@ -16,7 +16,6 @@ function Header() {
 						<li><Link to="/">Products</Link></li>
 					</ul>
 				</div>
-			The Feldmex variance swap platform is unaudited, you and only you are responsible for the security of your funds use at your own risk
 		</div>
 		);
 }

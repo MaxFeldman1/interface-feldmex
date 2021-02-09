@@ -6,21 +6,29 @@ import VarSwapInfo from '../VarSwapInfo';
 import { abi as OrganizerAbi } from '../../abi/organizer.js';
 
 
-const OrganizerAddr = "0x78f228ebce534f39b3aee80b9faa4a93251b9eaf";
+const MainnetOrganizerAddr = "0x0a297852c3F315196D2600d68DF999EeDdBAfC0F";
 
+const KovanOrganizerAddr = "0x3607bb245482d2b780f0Fe0e0Aac6A17b3CFD150";
 
 function Home() {
 	const context = useWeb3Context();
 
 	const [instances, setInstances] = useState(null);
+	
+	const [onTestnet, setOnTestnet] = useState(null);
 
 	useEffect( () => {
 		if (!context.active || context.error) return;
 		
 		async function asyncUseEffect() {
 			if (instances !== null) return;
+			let _onTestnet = onTestnet;
+			if (_onTestnet === null) {
+				_onTestnet = (await context.library.eth.net.getId()) === 42;
+				setOnTestnet(_onTestnet);
+			}
 
-			const OrganizerContract =  new context.library.eth.Contract(OrganizerAbi, OrganizerAddr);
+			const OrganizerContract =  new context.library.eth.Contract(OrganizerAbi, _onTestnet ? KovanOrganizerAddr :  MainnetOrganizerAddr);
 
 			OrganizerContract.methods.varianceSwapInstancesLength().call().then(async (res: string) => {
 				let length: number = parseInt(res);

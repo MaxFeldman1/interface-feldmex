@@ -6,6 +6,7 @@ import discord from '../../assets/discord.svg';
 function Footer() {
 	return (
 		<div className="footer">
+			<b>The Feldmex Variance Swap Platform is unaudited, you are responsible for your funds use at your own risk</b>
 			<a href="https://discord.gg/HrBM8zV" target="_blank" rel="noreferrer"><img alt={"discord.svg"} src={discord} /></a>
 			<a href="https://github.com/Feldmex/varianceSwaps.git" target="_blank" rel="noreferrer"><img alt={"github.png"} src={github} /></a>
 		</div>

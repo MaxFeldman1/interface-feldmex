@@ -457,6 +457,8 @@ function TradeVarSwap() {
 
 	const context = useWeb3Context();
 
+	const [onTestnet, setOnTestnet] = useState(null);
+
 	const [balanceLong, setBalanceLong] = useState("");
 	const [balanceShort, setBalanceShort] = useState("");
 	const [balancePayout, setBalancePayout] = useState("");
@@ -519,6 +521,11 @@ function TradeVarSwap() {
 		const VarSwapContract = new context.library.eth.Contract(VarSwapHandlerAbi, SwapAddress);
 
 		async function asyncUseEffect() {
+
+			if (onTestnet === null) {
+				let _onTestnet = (await context.library.eth.net.getId()) === 42;
+				setOnTestnet(_onTestnet);
+			}
 
 			if (balanceLong === "" && context.connectorName !== "Infura")
 				setBalanceLong(await VarSwapContract.methods.balanceLong(context.account).call());
@@ -920,9 +927,9 @@ function TradeVarSwap() {
 				<h1 className="header">LVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT0, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);
@@ -963,9 +970,9 @@ function TradeVarSwap() {
 				<h1 className="header">LVT / SVT Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT1, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://balancer.exchange/#/swap/"+longVarAddress+"/"+shortVarAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+longVarAddress+"/"+shortVarAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn1 !== null ? lpTkn1._address : "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);
@@ -1007,9 +1014,9 @@ function TradeVarSwap() {
 				<h1 className="header">SVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT2, 18)}</h2>
 				<div className="_3buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://balancer.exchange/#/swap/"+shortVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Remove Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+shortVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Add Liquidity</a></button>
+					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Remove Liquidity</a></button>
 				</div>
 			</div>
 		);

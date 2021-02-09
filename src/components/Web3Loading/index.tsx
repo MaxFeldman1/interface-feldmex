@@ -33,7 +33,7 @@ function Web3Loading(props: _props) {
 					Web3 Loading
 				</h1>
 				<h1 className="subHeader">
-					Ensure Meta Mask is Enabled and on the Kovan Network
+					Ensure Meta Mask is Enabled and on Either the Kovan Test Network or Ethereum Mainnet
 				</h1>
 			</div>
 		);

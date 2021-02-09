@@ -8,7 +8,7 @@ import { abi as OrganizerAbi } from '../../abi/organizer.js';
 
 const MainnetOrganizerAddr = "0x0a297852c3F315196D2600d68DF999EeDdBAfC0F";
 
-const KovanOrganizerAddr = "0x3607bb245482d2b780f0Fe0e0Aac6A17b3CFD150";
+const KovanOrganizerAddr = "0x4b3BC1591e12EBe79e25c38239563112CB8f16cc";
 
 function Home() {
 	const context = useWeb3Context();

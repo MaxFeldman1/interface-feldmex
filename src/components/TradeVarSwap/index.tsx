@@ -220,7 +220,9 @@ async function burnSwaps(
 	amountString: string,
 	balanceLong: string,
 	balanceShort: string,
+	maxPayout: string,
 	symbol: string,
+	payoutAssetDecimals: number,
 	setBalanceLong: Function,
 	setBalanceShort: Function,
 	setBalancePayout: Function
@@ -234,6 +236,8 @@ async function burnSwaps(
 	const forwardAdjString = getAmountFromAdjustedString(amountString, 18);
 	
 	let BN = context.library.utils.BN;
+
+	const payout = (new BN(maxPayout)).mul(new BN(forwardAdjString));
 
 	if ((new BN(forwardAdjString)).cmp(new BN(0)) < 1) {
 		alert(`You can only burn a positive number of swaps`);
@@ -252,7 +256,7 @@ async function burnSwaps(
 
 	let caught = false;
 
-	alert(`You will be prompted to burn ${amountString} long and short variance tokens to receive ${amountString} ${symbol}`);
+	alert(`You will be prompted to burn ${amountString} long and short variance tokens to receive ${getBalanceString(amountString, payoutAssetDecimals)} ${symbol}`);
 
 	try {
 		await VarSwapContract.methods.burnVariance(forwardAdjString, context.account).send({from: context.account});
@@ -889,7 +893,7 @@ function TradeVarSwap() {
 						Mint Swaps from {amountString} {payoutAssetSymbol}
 					</button>
 
-					<button onClick={() => burnSwaps(context, amountString, balanceLong, balanceShort, payoutAssetSymbol, setBalanceLong, setBalanceShort, setBalancePayout)}>
+					<button onClick={() => burnSwaps(context, amountString, balanceLong, balanceShort, maxPayout, payoutAssetSymbol, payoutAssetDecimals, setBalanceLong, setBalanceShort, setBalancePayout)}>
 						Burn {amountString} Swaps
 					</button>
 				</div>

@@ -1,137 +1,344 @@
+@import url('https://fonts.gstatic.com');
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap');
+
 * {
-	font-family: Helvetica;
+    font-family: 'Dosis', sans-serif;
 }
-
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+}
 body {
-	background-color: #eee;
+    background: white;
+}
+ul,
+li {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+/* ================================================================== */
+/* About Background */
+.about-content {
+    padding-top: 100px;
+    background: linear-gradient(
+        -45deg,
+        orange,
+        rgb(37, 37, 37),
+        rgb(37, 37, 37),
+        orange
+    );
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    display: flex;
+    align-items: center;
+	flex-direction: column;
 }
 
-div.content {
-	clear: both;
-	position: relative;
-	top: 140px;
-	color: orange;
-	margin-left: 150px;
-	margin-right: 150px;
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
-
+.content {
+    max-width: 650px;
+    min-width: 550px;
+}
+/* ================================================================== */
+/* Introducing Header Container*/
+.introducing-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+/* Header */
 .header {
-	font-size: 50px;
-	width: 100%;
-	text-align: center;
+    font-size: 60px;
+    text-transform: uppercase;
+    width: 100%;
+    text-align: center;
+    color: orange;
+    font-family: 'Dosis', sans-serif;
+}
+.img {
+    width: 100%;
+    display: flex;
+	justify-content: center;
+	background: black;
+}
+.img img {
+    width: 100%;
+}
+/* ========================================================== */
+/* About Content */
+.content-containers {
+    width: 100%;
+}
+.all-containers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+}
+.all-containers h1 {
+    color: orange;
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+}
+.all-containers p {
+    color: white;
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+}
+/* Content */
+.content1,
+.content2,
+.content3,
+.content4,
+.content5,
+.content6 {
+    width: 100%;
+    margin: 10px 0px 10px 0px;
+    padding: 10px;
+    border-radius: 20px;
+    background: rgba(26, 26, 26, 0.404);
+}
+.content4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.content5 a {
+    color: orange;
+}
+.content5 ol {
+	border-radius: 15px;
+    padding: 10px;
+    border-top: solid 1px white;
+    border-bottom: solid 1px white;
+}
+.content5 li {
+    margin-left: 30px;
+    color: white;
+    text-shadow: rgb(255, 255, 255) 0.1em 0.1em 0.3em;
+    font-size: 20px;
+}
+.content6 ol {
+	border-radius: 15px;
+    padding: 10px;
+    border-top: solid 1px white;
+    border-bottom: solid 1px white;
+}
+.content6 li {
+    margin-left: 30px;
+    color: white;
+    text-shadow: rgb(255, 255, 255) 0.1em 0.1em 0.3em;
+    font-size: 20px;
+}
+/* Calculate Section */
+._code {
+    text-align: left;
+    background-color: transparent;
+    color: orange;
+    border-radius: 20px;
+    width: 95%;
+    font-size: 13.5px;
 }
 
-.subHeader {
-	font-size: 35px;
-	width: 100%;
-	text-align: center;	
-}
-
+/* ================================================================== */
+/* Product Container*/
 .productMenu {
-	font-size: 25px;
-	color: gray;
-	text-align: left;
+    font-size: 500px;
+    color: gray;
+    text-align: left;
 }
 
 .productList {
-	font-size: 20px;
+    font-size: 20px;
 }
 
 .noDec {
-	color: orange;
-	font-size: 25px;
-	text-decoration: none;
+    color: orange;
+    font-size: 25px;
+    text-decoration: none;
 }
 
 .noDec:hover {
-	color: red;
+    color: red;
 }
 
 button {
-	color: orange;
-	background-color: white;
-	border-radius: 5px;
-	font-size: 30px;
+    color: orange;
+    background-color: white;
+    border-radius: 5px;
+    font-size: 30px;
 }
 
 .buttonBox {
-	margin: auto;
-	width: 100%;
-
+    margin: auto;
+    width: 100%;
 }
 
 .buttonBox > button {
-	width: 50%;
+    width: 50%;
 }
 
 ._3buttonBox {
-	margin: auto;
-	width: 100%;
-
+    margin: auto;
+    width: 100%;
 }
 
 ._3buttonBox > * {
-	width: 33.33%;
+    width: 33.33%;
 }
-
-.subSubHeaderLeft {
-	margin-top: 45px;
-	text-align: left;
-}
-
-.subSubHeaderRight {
-	margin-top: 45px;
-	text-align: right;
-}
-
-.subSubHeaderLeft > span, .subSubHeaderRight > span {
-	color: orange;
-	padding: 20px;
-	border-radius: 10px;
-}
-
-p, ol, ol > li {
-	font-size: 20px;
-	color: black;
-	border-radius: 7px;
-	text-align: left;
-}
-
-p > a {
-	text-decoration: none;
-}
-
-._code {
-	background-color: grey;
-	color: #eee;
-	border-radius: 20px;
-}
-
+/* ==================================== */
+/* Footer */
 .footer {
-	clear: both;
-	position: fixed;
-	bottom: 0px;
-	right: 0px;
-}
-
-.footer > a {
-	float: right;
-}
-
-.spanButton {
-	width: 100%;
-	display: flex;
+	background: rgba(255, 166, 0, 0.678);
+	 display: flex;
+	align-items: center;
 	justify-content: center;
+	width: 100%;
+}
+.footer-content{
+	 display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+	width: 95%;
+}
+.footer-header{
+	font-size: 2rem;
+	width: 30%;
+}
+.icon-container{
+	width: 40%;
+	text-align: center;
+
+}
+.icon{
+	padding:20px;
+	width: 30px;
+}
+.risk{
+		width: 25%;
+	text-align: center;
+	display: flex;
+		align-items: center;
+	justify-content: center;
+
+}
+/* ==================================== */
+.spanButton {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .spanButton > * {
-	width: 100%;
+    width: 100%;
 }
 
 .InputTitle {
-	font-size: 30px;
+    font-size: 30px;
 }
 
 .InputField {
-	width: 25%;
+    width: 25%;
 }

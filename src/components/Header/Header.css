@@ -40,8 +40,9 @@ div.navbar > div.links > ul {
 
 }
 div.navbar > div.logo > a > img {
-	height: 75px;
+	width: 40%;
 	border-radius: 30px;
+	padding: 20px 0 20px 0;
 }
 .links{
 		padding-right: 50px;

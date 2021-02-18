@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
 import {Link, BrowserRouter as Router} from 'react-router-dom';
-import feldmexLogo from '../../assets/feldmex.png'
+import feldmexLogo from '../../assets/word-logo.png'
 
 function Header() {
 	return (

@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import About from './components/About';
 import TradeVarSwap from './components/TradeVarSwap';
+import SimpleTradeVarSwap from './components/SimpleTradeVarSwap';
 import Web3Loading from './components/Web3Loading';
 
 const { InjectedConnector, NetworkOnlyConnector } = Connectors;
@@ -37,9 +38,9 @@ function App() {
 						<Header />
 						<Web3Loading />
 						<Route exact path="/" component={Home}/>
-						<Route exact path="/trade/:swapAddress" component={TradeVarSwap}/>
+						<Route exact path="/trade2/:swapAddress" component={TradeVarSwap}/>
+						<Route exact path="/trade/:swapAddress" component={SimpleTradeVarSwap}/>
 						<Route exact path="/About" component={About}/>
-
 						<Footer />
 				</ Web3Provider>
 		</Router>

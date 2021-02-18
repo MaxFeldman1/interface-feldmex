@@ -1,6 +1,6 @@
 import React from 'react';
 import '../Home/Home.css';
-import github from '../../assets/github.png';
+import github from '../../assets/github.svg';
 import discord from '../../assets/discord.svg';
 import email from '../../assets/email.svg';
 

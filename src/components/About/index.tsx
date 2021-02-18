@@ -5,12 +5,11 @@ import feldmexLogo from '../../assets/logo.png';
 
 function About() {
     return (
-        <div className="about-content">
-            <div className="content">
+        <div className="about-background">
+            <div className="about-content">
                 <div className="introducing-header">
                     <div className="header">
-                        <h1>Introducing</h1>
-                        <h1>Feldmex</h1>
+                        <h1>Introducing Feldmex</h1>
                     </div>
                     <div className="img">
                         <img src={feldmexLogo} alt="Feldmex Logo" />
@@ -224,7 +223,7 @@ function getRealizedVariance(priceSeries) {
                                 off of an exchange such as Uniswap.
                             </p>
                         </div>
-                    </div>                       
+                    </div>
                 </div>
             </div>
         </div>

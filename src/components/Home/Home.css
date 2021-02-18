@@ -105,8 +105,207 @@ a {
     text-decoration: inherit;
 }
 /* ================================================================== */
+/* Home Page */
+
+/* Home Background */
+.home-background{
+    padding-top: 100px;
+    height: 100%;
+    background: linear-gradient(
+        -45deg,
+        orange,
+        rgb(37, 37, 37),
+        rgb(37, 37, 37),
+        orange
+    );
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.home-content{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+}
+.home-jumbotron{
+    height: 80vh;
+    width: 100%;
+    display: flex;
+}
+.jumbotron{
+    padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    text-shadow: rgb(255, 255, 255) 0.1em 0.1em 0.3em;
+}
+.jumbotron h1{
+    width: 100%;
+    font-size: 6rem;
+    color: orange;
+}
+.jumbotron p{
+    padding-top: 70px;
+    width: 75%;
+    font-size: 1.5rem;
+    color: orange;
+}
+.home-jumbotron img{
+    height: 80%;
+    width: 70%;
+    padding-top: 150px;
+
+}
+/* Variance Swaps Container */
+.variance-header{
+    margin-top: 200px;
+    color: white;
+    text-shadow: rgb(255, 255, 255) 0.05em 0.05em 0.3em;
+    color: orange;
+    font-size: 60px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Dosis', sans-serif;
+    padding: 20px;
+    
+}
+.noDec-content{
+    display: flex;
+    justify-content: center;
+    height: 70vh;
+}
+.noDec-content ul{
+    height: 50%;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.322);
+
+}
+.noDec1-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 300px;
+    list-style-type: none;
+
+}
+.noDec1 {
+    color: orange;
+    font-size: 40px;
+    text-decoration: none;
+}
+.noDec1:hover {
+    color: red;
+}
+.noDec2-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 300px;
+    list-style-type: none;
+}
+.noDec2 li{
+    color: white;
+    text-align: center;
+}
+/* ================================================================== */
+/* Simple Trade Variance Container*/
+.simple-trade-background{
+      padding-top: 100px;
+    height: 100%;
+    background: linear-gradient(
+        -45deg,
+        orange,
+        rgb(37, 37, 37),
+        rgb(37, 37, 37),
+        orange
+    );
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.simple-trade-content{
+
+}
+.balance-container{
+    color: white;
+}
+/* Product*/
+.product-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 200px;
+    border-radius: 15px;
+}
+.productMenu {
+    font-size: 500px;
+    color: gray;
+    text-align: left;
+}
+
+.productList {
+    font-size: 20px;
+    list-style-type: none;
+}
+button {
+    color: orange;
+    border-radius: 5px;
+    font-size: 30px;
+}
+
+.buttonBox {
+    margin: auto;
+    width: 100%;
+        background-color: orangered;
+
+}
+
+.buttonBox > button {
+    width: 50%;
+}
+
+._3buttonBox {
+    background-color: orangered;
+    margin: auto;
+    width: 80%;
+}
+
+._3buttonBox > * {
+    width: 33.33%;
+}
+/* ==================================== */
+.spanButton {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.spanButton > * {
+    width: 100%;
+}
+
+.InputTitle {
+    font-size: 30px;
+}
+
+.InputField {
+    width: 25%;
+}
+
+/* ================================================================== */
+/* About Page */
+
 /* About Background */
-.about-content {
+.about-background {
     padding-top: 100px;
     background: linear-gradient(
         -45deg,
@@ -133,9 +332,9 @@ a {
         background-position: 0% 50%;
     }
 }
-.content {
-    max-width: 650px;
-    min-width: 550px;
+.about-content{
+    max-width: 850px;
+    min-width: 650px;
 }
 /* ================================================================== */
 /* Introducing Header Container*/
@@ -152,15 +351,18 @@ a {
     text-align: center;
     color: orange;
     font-family: 'Dosis', sans-serif;
+    padding: 20px;
 }
 .img {
     width: 100%;
     display: flex;
 	justify-content: center;
-	background: black;
+    background: rgba(0, 0, 0, 0.322);
+    border-radius: 20px;
 }
 .img img {
-    width: 100%;
+    padding: 20px;
+    width: 60%;
 }
 /* ========================================================== */
 /* About Content */
@@ -241,52 +443,6 @@ a {
     font-size: 13.5px;
 }
 
-/* ================================================================== */
-/* Product Container*/
-.productMenu {
-    font-size: 500px;
-    color: gray;
-    text-align: left;
-}
-
-.productList {
-    font-size: 20px;
-}
-
-.noDec {
-    color: orange;
-    font-size: 25px;
-    text-decoration: none;
-}
-
-.noDec:hover {
-    color: red;
-}
-
-button {
-    color: orange;
-    background-color: white;
-    border-radius: 5px;
-    font-size: 30px;
-}
-
-.buttonBox {
-    margin: auto;
-    width: 100%;
-}
-
-.buttonBox > button {
-    width: 50%;
-}
-
-._3buttonBox {
-    margin: auto;
-    width: 100%;
-}
-
-._3buttonBox > * {
-    width: 33.33%;
-}
 /* ==================================== */
 /* Footer */
 .footer {
@@ -294,7 +450,7 @@ button {
 	 display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 100%;
+    width: 100%;
 }
 .footer-content{
 	 display: flex;
@@ -323,22 +479,4 @@ button {
 		align-items: center;
 	justify-content: center;
 
-}
-/* ==================================== */
-.spanButton {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.spanButton > * {
-    width: 100%;
-}
-
-.InputTitle {
-    font-size: 30px;
-}
-
-.InputField {
-    width: 25%;
 }

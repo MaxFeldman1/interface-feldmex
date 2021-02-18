@@ -108,7 +108,7 @@ a {
 /* Home Page */
 
 /* Home Background */
-.home-background{
+.home-background {
     padding-top: 100px;
     height: 100%;
     background: linear-gradient(
@@ -124,42 +124,41 @@ a {
     align-items: center;
     flex-direction: column;
 }
-.home-content{
+.home-content {
     display: flex;
     flex-direction: column;
     width: 90%;
 }
-.home-jumbotron{
+.home-jumbotron {
     height: 80vh;
     width: 100%;
     display: flex;
 }
-.jumbotron{
+.jumbotron {
     padding-top: 50px;
     display: flex;
     flex-direction: column;
     color: white;
     text-shadow: rgb(255, 255, 255) 0.1em 0.1em 0.3em;
 }
-.jumbotron h1{
+.jumbotron h1 {
     width: 100%;
     font-size: 6rem;
     color: orange;
 }
-.jumbotron p{
+.jumbotron p {
     padding-top: 70px;
     width: 75%;
     font-size: 1.5rem;
     color: orange;
 }
-.home-jumbotron img{
+.home-jumbotron img {
     height: 80%;
     width: 70%;
     padding-top: 150px;
-
 }
 /* Variance Swaps Container */
-.variance-header{
+.variance-header {
     margin-top: 200px;
     color: white;
     text-shadow: rgb(255, 255, 255) 0.05em 0.05em 0.3em;
@@ -169,29 +168,26 @@ a {
     text-align: center;
     font-family: 'Dosis', sans-serif;
     padding: 20px;
-    
 }
-.noDec-content{
+.noDec-content {
     display: flex;
     justify-content: center;
     height: 70vh;
 }
-.noDec-content ul{
+.noDec-content ul {
     height: 50%;
     margin: 10px;
     padding: 10px;
     border-radius: 15px;
     background: rgba(0, 0, 0, 0.322);
-
 }
-.noDec1-container{
+.noDec1-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 150px;
     width: 300px;
     list-style-type: none;
-
 }
 .noDec1 {
     color: orange;
@@ -201,7 +197,7 @@ a {
 .noDec1:hover {
     color: red;
 }
-.noDec2-container{
+.noDec2-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -209,14 +205,14 @@ a {
     width: 300px;
     list-style-type: none;
 }
-.noDec2 li{
+.noDec2 li {
     color: white;
     text-align: center;
 }
 /* ================================================================== */
 /* Simple Trade Variance Container*/
-.simple-trade-background{
-      padding-top: 100px;
+.simple-trade-background {
+    padding-top: 100px;
     height: 100%;
     background: linear-gradient(
         -45deg,
@@ -231,14 +227,12 @@ a {
     align-items: center;
     flex-direction: column;
 }
-.simple-trade-content{
 
-}
 .balance-container{
     color: white;
 }
 /* Product*/
-.product-container{
+.product-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -256,51 +250,103 @@ a {
     font-size: 20px;
     list-style-type: none;
 }
-button {
-    color: orange;
-    border-radius: 5px;
-    font-size: 30px;
-}
-
-.buttonBox {
+.pool-containers {
     margin: auto;
-    width: 100%;
-        background-color: orangered;
+}
+.pool-HeaderAndLinks, .staking-content{
+    color: white;
+    text-align: center;
+    font-size: 1.2rem;
+}
+.pool-HeaderAndLinks .links-buttonBox {
+    height: 10vh;
+    background: rgba(75, 75, 75, 0.534);
+    padding: 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+.pool-HeaderAndLinks .amount-buttonBox {
+    height: 20vh;
+    background: rgba(75, 75, 75, 0.534);
+    padding: 20px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+.links-buttonBox button {
+    margin: 10px;
+    font-size: 1.5rem;
+    background: transparent;
+    cursor: pointer;
+    border: solid 2px white;
+    border-radius: 15px;
+    color: orange;
 
 }
-
-.buttonBox > button {
+.amount-buttonBox button {
+    margin: 10px;
+    font-size: 1.5rem;
+    background: transparent;
+    cursor: pointer;
+    border: solid 2px white;
+    border-radius: 10px;
+    color: orange;
+}
+.form__group {
+    text-align: center;
+    position: relative;
+    padding: 10px;
+    margin: auto;
     width: 50%;
 }
-
-._3buttonBox {
-    background-color: orangered;
-    margin: auto;
-    width: 80%;
-}
-
-._3buttonBox > * {
-    width: 33.33%;
-}
-/* ==================================== */
-.spanButton {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.spanButton > * {
-    width: 100%;
-}
-
-.InputTitle {
-    font-size: 30px;
-}
-
 .InputField {
-    width: 25%;
+    font-family: inherit;
+    width: 100%;
+    border: 0;
+    border-bottom: 2px solid #9b9b9b;
+    outline: 0;
+    font-size: 1.3rem;
+    color: #fff;
+    padding: 7px 0;
+    background: transparent;
+    transition: border-color 0.2s;
 }
-
+.InputField::placeholder {
+    color: transparent;
+}
+.InputField:placeholder-shown ~ .form__label {
+    font-size: 1.3rem;
+    cursor: text;
+    top: 20px;
+}
+.form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: #9b9b9b;
+}
+.InputField:focus {
+    padding-bottom: 6px;
+    font-weight: 700;
+    border-width: 3px;
+    border-image: linear-gradient(to right, orange, black);
+    border-image-slice: 1;
+}
+.InputField:focus ~ .form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: orange;
+    font-weight: 700;
+}
+/* reset input */
+.InputField:required,
+.form__field:invalid {
+    box-shadow: none;
+}
 /* ================================================================== */
 /* About Page */
 
@@ -318,7 +364,7 @@ button {
     animation: gradient 15s ease infinite;
     display: flex;
     align-items: center;
-	flex-direction: column;
+    flex-direction: column;
 }
 
 @keyframes gradient {
@@ -332,7 +378,7 @@ button {
         background-position: 0% 50%;
     }
 }
-.about-content{
+.about-content {
     max-width: 850px;
     min-width: 650px;
 }
@@ -356,7 +402,7 @@ button {
 .img {
     width: 100%;
     display: flex;
-	justify-content: center;
+    justify-content: center;
     background: rgba(0, 0, 0, 0.322);
     border-radius: 20px;
 }
@@ -410,7 +456,7 @@ button {
     color: orange;
 }
 .content5 ol {
-	border-radius: 15px;
+    border-radius: 15px;
     padding: 10px;
     border-top: solid 1px white;
     border-bottom: solid 1px white;
@@ -422,7 +468,7 @@ button {
     font-size: 20px;
 }
 .content6 ol {
-	border-radius: 15px;
+    border-radius: 15px;
     padding: 10px;
     border-top: solid 1px white;
     border-bottom: solid 1px white;
@@ -446,37 +492,35 @@ button {
 /* ==================================== */
 /* Footer */
 .footer {
-	background: rgba(255, 166, 0, 0.678);
-	 display: flex;
-	align-items: center;
-	justify-content: center;
+    background: rgba(255, 166, 0, 0.678);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
 }
-.footer-content{
-	 display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: row;
-	width: 95%;
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 95%;
 }
-.footer-header{
-	font-size: 2rem;
-	width: 30%;
+.footer-header {
+    font-size: 2rem;
+    width: 30%;
 }
-.icon-container{
-	width: 40%;
-	text-align: center;
-
+.icon-container {
+    width: 40%;
+    text-align: center;
 }
-.icon{
-	padding:20px;
-	width: 30px;
+.icon {
+    padding: 20px;
+    width: 30px;
 }
-.risk{
-		width: 25%;
-	text-align: center;
-	display: flex;
-		align-items: center;
-	justify-content: center;
-
+.risk {
+    width: 25%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

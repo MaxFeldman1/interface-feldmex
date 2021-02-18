@@ -903,7 +903,7 @@ function TradeVarSwap() {
 				<br />
 
 				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
+				<input className="InputField2" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -932,7 +932,7 @@ function TradeVarSwap() {
 			<div>
 				<h1 className="header">LVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT0, 18)}</h2>
-				<div className="_3buttonBox">
+				<div className="links-buttonBox">
 					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
 					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
 					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
@@ -941,11 +941,11 @@ function TradeVarSwap() {
 		);
 	const pool0Staking = 
 		(
-			<div>
+			<div className="staking-content">
 				<h1 className="subHeader">Staking</h1>
 				<h2>Rewards Tokens = {inflator0} * Amount Staked * Days Staked<sup>2</sup></h2>
 				<ol>
-					{stakes0 !== null && stakes0.length > 0 ? stakes0 : <li>Currently There Are No Open Stakes</li>}
+					{stakes0 !== null && stakes0.length > 0 ? stakes0 : <p>Currently There Are No Open Stakes</p>}
 				</ol>
 			</div>
 		);
@@ -960,13 +960,15 @@ function TradeVarSwap() {
 		:
 		(
 			<div>
-				<div className="_3buttonBox">
+				<div className="amount-buttonBox">
+					<div className="form__group field">
+  					    <input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
+  					    <label className="form__label">Amount</label>
+					</div>
 					<button onClick={() => approveLPToken(context, amountString, `LVT / ${payoutAssetSymbol}`, lpTkn0, stakeContract._address, setApprovalLPT0)}>Approve LVT / {payoutAssetSymbol}</button>
 					<button onClick={() => startStake(context, amountString, balanceLPT0, approvalLPT0, 0, `LVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>Start Stake</button>
 					<button onClick={() => endStakes(context, 0, (stakes0 === null ? 0 : stakes0.length), `LVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>End All Stakes</button>
 				</div>
-				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -1019,7 +1021,7 @@ function TradeVarSwap() {
 			<div>
 				<h1 className="header">SVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT2, 18)}</h2>
-				<div className="_3buttonBox">
+				<div className="links-buttonBox">
 					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+shortVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
 					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Add Liquidity</a></button>
 					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Remove Liquidity</a></button>
@@ -1028,11 +1030,11 @@ function TradeVarSwap() {
 		);
 	const pool2Staking = 
 		(
-			<div>
+			<div className="staking-content">
 				<h1 className="subHeader">Staking</h1>
 				<h2>Rewards Tokens = {inflator2} * Amount Staked * Days Staked<sup>2</sup></h2>
 				<ol>
-					{stakes2 !== null && stakes2.length > 0 ? stakes2 : <li>Currently There Are No Open Stakes</li>}
+					{stakes2 !== null && stakes2.length > 0 ? stakes2 : <p>Currently There Are No Open Stakes</p>}
 				</ol>
 			</div>
 		);
@@ -1047,14 +1049,15 @@ function TradeVarSwap() {
 		:
 		(
 			<div>
-				<div className="_3buttonBox">
+				<div className="amount-buttonBox">
+				<div className="form__group field">
+  					    <input className="InputField" placeholder="Amount" name="Amount" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}} />
+  					    <label className="form__label">Amount</label>
+					</div>
 					<button onClick={() => approveLPToken(context, amountString, `SVT / ${payoutAssetSymbol}`, lpTkn2, stakeContract._address, setApprovalLPT2)}>Approve SVT / {payoutAssetSymbol}</button>
 					<button onClick={() => startStake(context, amountString, balanceLPT2, approvalLPT2, 2, `SVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>Start Stake</button>
 					<button onClick={() => endStakes(context, 2, (stakes2 === null ? 0 : stakes1.length), `SVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>End All Stakes</button>
 				</div>
-
-				<span className="InputTitle">Amount: </span>
-				<input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
@@ -1069,7 +1072,6 @@ function TradeVarSwap() {
 
 	const content = (
         <div className="simple-trade-background">
-            <div className="simple-trade-content">
                 {mainInfo}
                 {rewardsInfo}
 
@@ -1081,10 +1083,13 @@ function TradeVarSwap() {
                 {helperButtons}
 
                 <br />
-
-                {pool0HeaderAndLinks}
-                {pool0Core}
-                {pool0Staking}
+                <div className="pool-containers">
+                    <div className="pool-HeaderAndLinks">
+                    {pool0HeaderAndLinks}
+                    {pool0Core}
+                    </div>
+                    {pool0Staking}
+                </div>
 
                 <br />
 
@@ -1093,14 +1098,16 @@ function TradeVarSwap() {
 			{pool1Staking} */}
 
                 <br />
-
-                {pool2HeaderAndLinks}
-                {pool2Core}
-                {pool2Staking}
+                <div className="pool-containers">
+                    <div className="pool-HeaderAndLinks">
+                    {pool2HeaderAndLinks}
+                    {pool2Core}
+                    </div>
+                    {pool2Staking}
+                </div>
 
                 {notice}
             </div>
-        </div>
     );
 
 	return content;

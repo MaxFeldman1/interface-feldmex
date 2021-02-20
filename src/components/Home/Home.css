@@ -227,9 +227,53 @@ a {
     align-items: center;
     flex-direction: column;
 }
-
-.balance-container{
+.mainInfo-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.VarSwapInfo {
+    color: orange;
+    padding-bottom: 10px;
+    font-size: 1.8rem;
+    text-align: center;
+}
+.VarSwapInfo-container {
     color: white;
+    font-size: 1.5rem;
+    height: 350px;
+    width: 80%;
+    display: flex;
+}
+.VarSwapInfo-container h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    height: 15%;
+    border-radius: 15px;
+    background: rgba(24, 22, 18, 0.397);
+    padding-top: 25px;
+}
+.info-h3 {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    font-size: 1.3rem;
+    padding: 20px;
+}
+.info-h3 h3 {
+    padding-bottom: 15px;
+}
+.balance-container {
+    background: rgba(24, 22, 18, 0.397);
+    border-radius: 15px;
+    width: 50%;
+    margin-right: 5px;
+}
+.payouts-container {
+    background: rgba(24, 22, 18, 0.397);
+    border-radius: 15px;
+    width: 50%;
+    margin-left: 5px;
 }
 /* Product*/
 .product-container {
@@ -250,13 +294,127 @@ a {
     font-size: 20px;
     list-style-type: none;
 }
+.rewards-container {
+    margin: auto;
+    width: 63%;
+}
 .pool-containers {
     margin: auto;
 }
-.pool-HeaderAndLinks, .staking-content{
+.pool-HeaderAndLinks,
+.staking-content {
     color: white;
     text-align: center;
     font-size: 1.2rem;
+}
+/* Buttons */
+.button-container-content {
+    display: flex;
+    flex-direction: row;
+}
+@import url('https://fonts.googleapis.com/css?family=Lato:100,300,400');
+@import url('https://fonts.googleapis.com/css?family=Roboto:100');
+.mas {
+    position: absolute;
+    color: white;
+    text-align: center;
+    width: 101%;
+    font-weight: 300;
+    font-size: 16px;
+    margin-top: 16px;
+    overflow: hidden;
+    font-weight: bold;
+}
+.Mint-mas {
+    position: absolute;
+    color: white;
+    text-align: center;
+    width: 101%;
+    font-weight: 300;
+    font-size: 16px;
+    margin-top: 4px;
+    overflow: hidden;
+    font-weight: bold;
+}
+@-webkit-keyframes ani {
+    from {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+    to {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+}
+@keyframes ani {
+    from {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+    to {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+}
+@-webkit-keyframes ani2 {
+    from {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+    to {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+}
+@keyframes ani2 {
+    from {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+    to {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+}
+.button-container-3 {
+    position: relative;
+    width: 200px;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3vh;
+    overflow: hidden;
+    border: 1px solid #000;
+    font-weight: 300;
+    transition: 0.5s;
+    letter-spacing: 1px;
+    border-radius: 8px;
+}
+.button-container-3 button {
+    width: 101%;
+    height: 100%;
+    font-weight: 300;
+    font-size: 16px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    background: rgb(255, 166, 0);
+    -webkit-mask: url('https://raw.githubusercontent.com/pizza3/asset/master/natureSmaller.png');
+    mask: url('https://raw.githubusercontent.com/pizza3/asset/master/natureSmaller.png');
+    -webkit-mask-size: 7100% 100%;
+    mask-size: 7100% 100%;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    -webkit-animation: ani2 0.7s steps(70) forwards;
+    animation: ani2 0.7s steps(70) forwards;
+}
+.button-container-3 button:hover {
+    -webkit-animation: ani 0.7s steps(70) forwards;
+    animation: ani 0.7s steps(70) forwards;
+    color: white;
+}
+.links-buttonBox {
+    display: flex;
 }
 .pool-HeaderAndLinks .links-buttonBox {
     height: 10vh;
@@ -272,7 +430,27 @@ a {
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
 }
-.links-buttonBox button {
+.rewards-container .amount-buttonBox {
+    height: 20vh;
+    background: rgba(75, 75, 75, 0.534);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+.rewards-container .BalanceRewards {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    height: fit-content;
+    color: white;
+    font-size: 1.5rem;
+    text-align: center;
+    background: rgba(75, 75, 75, 0.534);
+    padding: 20px;
+    border-radius: 15px;
+}
+/* .links-buttonBox button {
     margin: 10px;
     font-size: 1.5rem;
     background: transparent;
@@ -281,8 +459,8 @@ a {
     border-radius: 15px;
     color: orange;
 
-}
-.amount-buttonBox button {
+} */
+/* .amount-buttonBox button {
     margin: 10px;
     font-size: 1.5rem;
     background: transparent;
@@ -290,7 +468,9 @@ a {
     border: solid 2px white;
     border-radius: 10px;
     color: orange;
-}
+} */
+
+/* Amount Imput */
 .form__group {
     text-align: center;
     position: relative;
@@ -346,6 +526,72 @@ a {
 .InputField:required,
 .form__field:invalid {
     box-shadow: none;
+}
+/* Help */
+.help-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+.help-button-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 65%;
+    margin: 10px;
+}
+.help-header {
+    font-size: 1.8rem;
+    color: white;
+    padding-bottom: 10px;
+}
+.help-buttons {
+    display: flex;
+}
+.help-buttonBox {
+    display: flex;
+}
+.help-buttonBox button {
+    color: white;
+    background: rgba(24, 22, 18, 0.397);
+    font-size: 1.5rem;
+    margin: 5px;
+    padding: 5px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.help-buttonBox button:hover {
+    color: orange;
+}
+.help-output {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+    width: 600px;
+    margin: 10px;
+}
+.notice-containers {
+    margin: 20px;
+    background: rgba(24, 22, 18, 0.397);
+    padding: 20px;
+    text-align: center;
+    border-radius: 15px;
+    width: 500px;
+}
+.notice-header {
+    font-size: 2rem;
+    padding-bottom: 10px;
+    color: orange;
+}
+.notice-containers h2 {
+    color: white;
+    font-size: 1.5rem;
+    padding-bottom: 20px;
 }
 /* ================================================================== */
 /* About Page */

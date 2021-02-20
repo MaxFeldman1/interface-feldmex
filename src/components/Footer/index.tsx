@@ -4,13 +4,12 @@ import github from '../../assets/github.svg';
 import discord from '../../assets/discord.svg';
 import email from '../../assets/email.svg';
 
-
 function Footer() {
-	return (
+    return (
         <div className="footer">
             <div className="footer-content">
                 <div className="footer-header">
-                    <h1>Cotact Us</h1>
+                    <h1>Contact Us</h1>
                 </div>
                 <div className="icon-container">
                     <a
@@ -40,12 +39,11 @@ function Footer() {
                     </a>
                 </div>
                 <div className="risk">
-					<b>
-                    *The Feldmex Variance Swap Platform is unaudited, you are
-                    responsible for your funds use at your own risk*
-                </b>
-				</div>
-                
+                    <b>
+                        *The Feldmex Variance Swap Platform is unaudited, you
+                        are responsible for your funds use at your own risk*
+                    </b>
+                </div>
             </div>
         </div>
     );

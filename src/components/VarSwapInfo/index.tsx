@@ -172,7 +172,7 @@ function VarSwapInfo(props: VarSwapProps) {
         );
     else
         return (
-            <h1 className="subHeader">
+            <h1 className="VarSwapInfo">
                 {phrase} Annualized Variance from{' '}
                 {getDateFormatNoHours(startDate)} to{' '}
                 {getDateFormatNoHours(endDate)}, pays in {paysIn}

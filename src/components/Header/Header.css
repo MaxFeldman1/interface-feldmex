@@ -1,67 +1,134 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	vertical-align: baseline;
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
 }
 
 div.navbar {
-	position: fixed;
-	width: 100%;
-	background-color: transparent;
-	display: flex;
-	flex-direction: row;
+    position: fixed;
+    width: 100%;
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
 }
 
 div.navbar > div.links > ul {
-	line-height: 0px;
-	list-style-type: none;
+    line-height: 0px;
+    list-style-type: none;
 }
 
-.logo{
-	display: flex;
-	justify-content: center;
-	width: 50%;
-		margin-right: 175px;
-		padding-left: 30px;
-
+.logo {
+    display: flex;
+    justify-content: center;
+    width: 50%;
+    margin-right: 175px;
+    padding-left: 30px;
 }
 div.navbar > div.logo > a > img {
-	width: 40%;
-	border-radius: 30px;
-	padding: 20px 0 20px 0;
+    width: 40%;
+    border-radius: 30px;
+    padding: 20px 0 20px 0;
 }
-.links{
-		padding-right: 50px;
-		padding-top: 35px;
-		width: 50%;
-	margin-left: 500px;
-	}
-	.links ul{
-	display: flex;
-	justify-content: space-evenly;
-		width: 100%;
-	}
-	div.navbar > div.links > ul > * {
-	font-size: 1.4rem;
-	text-align: center;
-	border-radius: 15px;
+.links {
+    padding-right: 50px;
+    padding-top: 35px;
+    width: 50%;
+    margin-left: 500px;
+}
+.links ul {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+div.navbar > div.links > ul > * {
+    font-size: 1.4rem;
+    text-align: center;
+    border-radius: 15px;
 }
 
 div.navbar > div.links > ul > li > a {
-	color:orange;
-	text-decoration: none;
+    color: orange;
+    text-decoration: none;
 }

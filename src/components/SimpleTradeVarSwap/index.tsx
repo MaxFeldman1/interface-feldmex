@@ -719,18 +719,28 @@ function TradeVarSwap() {
 	var currentTime = Math.floor((new Date()).getTime()/1000);
 
 	const mainInfo = (
-			<div>
+			<div className="mainInfo-container">
 				<h1 className="header">Trade Variance Swaps</h1>
+				<h2><VarSwapInfo address={SwapAddress} link={false}/></h2>
+				<div className="VarSwapInfo-container">
 				<div className="balance-container">
-				<VarSwapInfo address={SwapAddress} link={false}/>
-				<h2>Balance Long Variance Tokens(LVT): {getBalanceString(balanceLong, 18)}</h2>
-				<h2>Balance Short Variance Tokens(SVT): {getBalanceString(balanceShort, 18)}</h2>
-				<h2>Balance {payoutAssetSymbol}: {getBalanceString(balancePayout, payoutAssetDecimals)}</h2>
-				<h2>Max Payout: {getBalanceString(maxPayout, payoutAssetDecimals)} {payoutAssetSymbol} + interest generated up to maturity</h2>
-				<h2>Implied Annualized Volatility at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%</h2>
-				<h2>Implied Annualized Variance at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%<sup>2</sup> = {(iVolPayout**2).toPrecision(6)}</h2>
-				<h2>Realized Volatility over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%</h2>
-				<h2>Realized Variance over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%<sup>2</sup> = {(iVolRealized**2).toPrecision(6)}</h2>
+				<h2>Balance</h2>
+				<div className="info-h3">
+				<h3>- Long Variance Tokens(LVT): {getBalanceString(balanceLong, 18)}</h3>
+				<h3>- Short Variance Tokens(SVT): {getBalanceString(balanceShort, 18)}</h3>
+				<h3>- {payoutAssetSymbol}: {getBalanceString(balancePayout, payoutAssetDecimals)}</h3>
+				<h3>- Realized Volatility over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%</h3>
+				<h3>- Realized Variance over first {daysSinceInception} days: {(iVolRealized*100).toPrecision(6)}%<sup>2</sup> = {(iVolRealized**2).toPrecision(6)}</h3>
+				</div>
+				</div>
+				<div className="payouts-container">
+				<h2>Payouts</h2>
+				<div className="info-h3">
+				<h3>-Max Payout: {getBalanceString(maxPayout, payoutAssetDecimals)} {payoutAssetSymbol} + interest generated up to maturity</h3>
+				<h3>-Implied Annualized Volatility at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%</h3>
+				<h3>-Implied Annualized Variance at Maximum Payout: {(iVolPayout*100).toPrecision(6)}%<sup>2</sup> = {(iVolPayout**2).toPrecision(6)}</h3>
+			</div>
+			</div>
 			</div>
 			</div>
 		);
@@ -855,24 +865,33 @@ function TradeVarSwap() {
 
 	const helperButtons = (
 			<div>
-				<div className="buttonBox">
+				<div className="help-container">
+				<div className="help-button-container">
+					<h1 className="help-header">Need Help?</h1>	
+				<div  className="help-buttons">
+				<div className="help-buttonBox">
 					<button onClick={() => setHelperButtonState(1)}>Volatility(%) to Payout</button>
 					<button onClick={() => setHelperButtonState(2)}>Variance to Payout</button>
 				</div>
-				<div className="_3buttonBox">
-
+				<div className="help-buttonBox">
 					<button onClick={() => setHelperButtonState(3)}>Price (LVT/{payoutAssetSymbol}) to break even Volatility and Variance</button>
 					<button onClick={() => setHelperButtonState(4)}>Price (SVT/{payoutAssetSymbol}) to break even Volatility and Variance</button>
 					<button onClick={() => setHelperButtonState(5)}>Price (LVT/SVT) to break even Volatility and Variance</button>
 				</div>
+				</div>
+			</div>
+			<div className="help-output">
 				{outputFromHelpButtons}
 			</div>
+			</div>
+			</div>
+
 		);
 
 	const mainButtons = claimVarianceReady ? 
 		(
 			<div>
-				<div className="spanButton">
+				<div className="links-buttonBox">
 					<button onClick={() => claimVariancePayout(context, SwapAddress, balanceLong, balanceShort, setBalanceLong, setBalanceShort, setBalancePayout)}>
 						Claim Variance Payout
 					</button>
@@ -882,33 +901,39 @@ function TradeVarSwap() {
 		:
 		(			
 			<div>
-				<div className="spanButton">
+				<div className="amount-buttonBox">
+					<div className="button-container-content">
+				<div className="button-container-3">
+					  <span className="mas">Approve {payoutAssetSymbol}</span>
 					<button onClick={() => approvePayoutAsset(context, amountString, payoutAssetAddress, payoutAssetSymbol, payoutAssetDecimals, setApprovalPayout)}>
 						Approve {payoutAssetSymbol}
 					</button>
-				</div>
-
-				<br />
-
-				<div className="buttonBox">
+					  </div>
+				<div className="button-container-3">
+					  <span className="mas">Mint Swaps from {amountString} {payoutAssetSymbol}</span>
 					<button onClick={() => mintSwaps(context, amountString, payoutAssetDecimals, approvalPayout, balancePayout, payoutAssetSymbol, fee, setBalanceLong, setBalanceShort, setBalancePayout)}>
 						Mint Swaps from {amountString} {payoutAssetSymbol}
 					</button>
-
+					  </div>
+				<div className="button-container-3">
+					  <span className="mas">Burn {amountString} Swaps</span>
 					<button onClick={() => burnSwaps(context, amountString, balanceLong, balanceShort, maxPayout, payoutAssetSymbol, payoutAssetDecimals, setBalanceLong, setBalanceShort, setBalancePayout)}>
 						Burn {amountString} Swaps
 					</button>
+					  </div>
 				</div>
-
+				<div className="form__group field">
+  					    <input className="InputField" placeholder="Amount" name="Amount" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}} />
+  					    <label className="form__label">Amount</label>
+					</div>
+</div>
 				<br />
 
-				<span className="InputTitle">Amount: </span>
-				<input className="InputField2" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
 			</div>
 		);
 
 	const rewardsInfo = (
-			<div>
+			<div className="BalanceRewards">
 				<h2>Balance Rewards Tokens: {getBalanceString(balanceRewardsToken, 18)}</h2>
 			</div>
 		);
@@ -916,11 +941,11 @@ function TradeVarSwap() {
 	const rewardsButtons = currentTime > parseInt(endStakingTimestamp)?
 		(
 			claimRewardsReady ?
-			(<div className="spanButton" onClick={() => claimRewardsPayout(context, stakeContract, balanceRewardsToken, setBalanceRewardsToken)}>
+			(<div className="links-buttonBox" onClick={() => claimRewardsPayout(context, stakeContract, balanceRewardsToken, setBalanceRewardsToken)}>
 				Claim Rewards
 			</div>)
 			:
-			(<div className="spanButton" onClick={() => openForRewardsDistribution(context, stakeContract, setClaimRewardsReady)}>
+			(<div className="links-buttonBox" onClick={() => openForRewardsDistribution(context, stakeContract, setClaimRewardsReady)}>
 				Enable Rewards To Be Claimed
 			</div>)
 		)
@@ -932,11 +957,20 @@ function TradeVarSwap() {
 			<div>
 				<h1 className="header">LVT / {payoutAssetSymbol} Balancer Pool</h1>
 				<h2>Balance LP Tokens {getBalanceString(balanceLPT0, 18)}</h2>
-				<div className="links-buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
-				</div>
+								<div className="links-buttonBox">
+				<div className="button-container-3">
+					  <span className="mas">Swap</span>
+					<button type="button" name="Hover"><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+longVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
+					  </div>
+				    <div className="button-container-3">
+					  <span className="mas">Add Liquidity</span>
+					<button type="button" name="Hover"><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Add Liquidity</a></button>
+					</div>
+					<div className="button-container-3">
+					<span className="mas">Remove Liquidity</span>
+					<button type="button" name="Hover"><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn0 !== null ? lpTkn0._address: "")}>Remove Liquidity</a></button>
+				</div>				</div>
+
 			</div>
 		);
 	const pool0Staking = 
@@ -962,12 +996,24 @@ function TradeVarSwap() {
 			<div>
 				<div className="amount-buttonBox">
 					<div className="form__group field">
-  					    <input className="InputField" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}}/>
+  					    <input className="InputField" placeholder="Amount" name="Amount" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}} />
   					    <label className="form__label">Amount</label>
 					</div>
+					<div className="button-container-content">
+				<div className="button-container-3">
+					  <span className="mas">Approve LVT / {payoutAssetSymbol}</span>
 					<button onClick={() => approveLPToken(context, amountString, `LVT / ${payoutAssetSymbol}`, lpTkn0, stakeContract._address, setApprovalLPT0)}>Approve LVT / {payoutAssetSymbol}</button>
+				</div>
+				<div className="button-container-3">
+					  <span className="mas">Start Stake</span>
 					<button onClick={() => startStake(context, amountString, balanceLPT0, approvalLPT0, 0, `LVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>Start Stake</button>
+				</div>
+				<div className="button-container-3">
+					  <span className="mas">End All Stakes</span>
 					<button onClick={() => endStakes(context, 0, (stakes0 === null ? 0 : stakes0.length), `LVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>End All Stakes</button>
+				</div>
+				</div>
+					
 				</div>
 			</div>
 		);
@@ -1016,18 +1062,70 @@ function TradeVarSwap() {
 	// 		</div>
 	// 	);
 
-	const pool2HeaderAndLinks =
-		(
-			<div>
-				<h1 className="header">SVT / {payoutAssetSymbol} Balancer Pool</h1>
-				<h2>Balance LP Tokens {getBalanceString(balanceLPT2, 18)}</h2>
-				<div className="links-buttonBox">
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"balancer.exchange/#/swap/"+shortVarAddress+"/"+payoutAssetAddress}>Swap</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Add Liquidity</a></button>
-					<button><a className="noDec" target="_blank" rel="noreferrer" href={"https://"+(onTestnet ? "kovan." : "")+"pools.balancer.exchange/#/pool/"+(lpTkn2 !== null ? lpTkn2._address : "")}>Remove Liquidity</a></button>
-				</div>
-			</div>
-		);
+	const pool2HeaderAndLinks = (
+        <div>
+            <h1 className="header">SVT / {payoutAssetSymbol} Balancer Pool</h1>
+            <h2>Balance LP Tokens {getBalanceString(balanceLPT2, 18)}</h2>
+            <div className="links-buttonBox">
+                <div className="button-container-3">
+                    <span className="mas">Swap</span>
+                    <button>
+                        <a
+                            className="noDec"
+                            target="_blank"
+                            rel="noreferrer"
+                            href={
+                                'https://' +
+                                (onTestnet ? 'kovan.' : '') +
+                                'balancer.exchange/#/swap/' +
+                                shortVarAddress +
+                                '/' +
+                                payoutAssetAddress
+                            }
+                        >
+                            Swap
+                        </a>
+                    </button>
+                </div>
+                <div className="button-container-3">
+                    <span className="mas">Add Liquidity</span>
+                    <button>
+                        <a
+                            className="noDec"
+                            target="_blank"
+                            rel="noreferrer"
+                            href={
+                                'https://' +
+                                (onTestnet ? 'kovan.' : '') +
+                                'pools.balancer.exchange/#/pool/' +
+                                (lpTkn2 !== null ? lpTkn2._address : '')
+                            }
+                        >
+                            Add Liquidity
+                        </a>
+                    </button>
+                </div>
+                <div className="button-container-3">
+                    <span className="mas">Remove Liquidity</span>
+                    <button>
+                        <a
+                            className="noDec"
+                            target="_blank"
+                            rel="noreferrer"
+                            href={
+                                'https://' +
+                                (onTestnet ? 'kovan.' : '') +
+                                'pools.balancer.exchange/#/pool/' +
+                                (lpTkn2 !== null ? lpTkn2._address : '')
+                            }
+                        >
+                            Remove Liquidity
+                        </a>
+                    </button>
+                </div>{' '}
+            </div>
+        </div>
+    );
 	const pool2Staking = 
 		(
 			<div className="staking-content">
@@ -1054,60 +1152,76 @@ function TradeVarSwap() {
   					    <input className="InputField" placeholder="Amount" name="Amount" value={amountString} type="number" onChange={(event: any) => {setAmountString(removeNegative(event.target.value))}} />
   					    <label className="form__label">Amount</label>
 					</div>
+					<div className="button-container-content">
+
+				<div className="button-container-3">
+					  <span className="mas">Approve SVT / {payoutAssetSymbol}</span>
 					<button onClick={() => approveLPToken(context, amountString, `SVT / ${payoutAssetSymbol}`, lpTkn2, stakeContract._address, setApprovalLPT2)}>Approve SVT / {payoutAssetSymbol}</button>
+				</div>
+				<div className="button-container-3">
+					  <span className="mas">Start Stake</span>
 					<button onClick={() => startStake(context, amountString, balanceLPT2, approvalLPT2, 2, `SVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>Start Stake</button>
+				</div>
+				<div className="button-container-3">
+					  <span className="mas">End All Stakes</span>
 					<button onClick={() => endStakes(context, 2, (stakes2 === null ? 0 : stakes1.length), `SVT / ${payoutAssetSymbol}`, stakeContract, setReloadStakes)}>End All Stakes</button>
+				</div>
+				</div>
 				</div>
 			</div>
 		);
 
 	const notice = (
 			<div>
-				<h1 className="header">NOTICE</h1>
-				<h2>Stakes will be rewarded for all time spent staking up to {getDateFormat(lastStakingTimestamp)}</h2>
-				<h2>Stakes not closed before {getDateFormat(endStakingTimestamp)} will not receive any rewards</h2>
-				<h2>Stakes not closed before {getDateFormat(destructionTimestamp)} will be subject to total loss of funds</h2>
+				<h1 className="notice-header">NOTICE</h1>
+				<h2>- Stakes will be rewarded for all time spent staking up to {getDateFormat(lastStakingTimestamp)}</h2>
+				<h2>- Stakes not closed before {getDateFormat(endStakingTimestamp)} will not receive any rewards</h2>
+				<h2>- Stakes not closed before {getDateFormat(destructionTimestamp)} will be subject to total loss of funds</h2>
 			</div>
 		);
 
 	const content = (
         <div className="simple-trade-background">
-                {mainInfo}
-                {rewardsInfo}
+            {mainInfo}
 
+            <div className="rewards-container">
+            	{rewardsInfo}
                 {rewardsButtons}
                 {mainButtons}
+            </div>
 
-                <br />
+            <br />
 
-                {helperButtons}
+            {helperButtons}
 
-                <br />
-                <div className="pool-containers">
-                    <div className="pool-HeaderAndLinks">
+            <br />
+            <div className="pool-containers">
+                <div className="pool-HeaderAndLinks">
                     {pool0HeaderAndLinks}
                     {pool0Core}
-                    </div>
-                    {pool0Staking}
                 </div>
+                {pool0Staking}
+            // </div>
 
-                <br />
+            <br />
 
-                {/* {pool1HeaderAndLinks}
+            {/* {pool1HeaderAndLinks}
 			{pool1Core}
 			{pool1Staking} */}
 
-                <br />
-                <div className="pool-containers">
-                    <div className="pool-HeaderAndLinks">
+            <br />
+            <div className="pool-containers">
+                <div className="pool-HeaderAndLinks">
                     {pool2HeaderAndLinks}
                     {pool2Core}
-                    </div>
-                    {pool2Staking}
                 </div>
-
-                {notice}
+                {pool2Staking}
             </div>
+            <div className="notice-containers">
+            {notice}
+			</div>
+
+        </div>
     );
 
 	return content;
